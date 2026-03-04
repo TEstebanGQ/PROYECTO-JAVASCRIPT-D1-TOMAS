@@ -1,4 +1,4 @@
-import { getData, createItem, updateItem, deleteItem } from '../store.js';
+import { getData, createItem, updateItem, deleteItem } from './src/js/store.js';
 
 export function renderCourses(container) {
     let courses = getData('lmsCourses');
