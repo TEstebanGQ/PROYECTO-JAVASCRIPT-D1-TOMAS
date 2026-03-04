@@ -1,5 +1,5 @@
-import { login } from '../src/js/store.js';
-import { navigateTo } from '../src/js/router.js';
+import { login } from '../store.js';
+import { navigateTo } from '../router.js';
 
 export function renderLoginView(container) {
     const html = `

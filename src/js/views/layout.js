@@ -1,5 +1,5 @@
-import { logout, getCurrentUser } from '../src/js/store.js';
-import { navigateTo } from '../src/js/router.js';
+import { logout, getCurrentUser } from '../store.js';
+import { navigateTo } from '../router.js';
 
 export function renderLayout(renderContent) {
     const app = document.getElementById('app');
