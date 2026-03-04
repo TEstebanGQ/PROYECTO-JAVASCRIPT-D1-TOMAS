@@ -6,7 +6,6 @@ export function renderLoginView(container) {
         <div class="login-page">
             <div class="login-card">
                 <div class="login-header">
-                    <img src="/img/icons/icon1.png" alt="Logo" style="width: 32px; height: 32px;">
                     <h1 class="login-title">Bienvenido de nuevo</h1>
                     <p class="login-subtitle">Ingresa tus credenciales para acceder al panel administrativo</p>
                 </div>

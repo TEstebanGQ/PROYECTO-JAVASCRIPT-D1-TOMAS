@@ -1,4 +1,4 @@
-import { hashPassword, verifyPassword } from './utils/hash.js';
+import { hashPassword } from './utils/hash.js';
 
 const storageKeys = {
     admins: 'lmsAdmins',
@@ -15,10 +15,9 @@ const defaultAdmin = {
     email: 'admin@abc.edu',
     telefono: '3001234567',
     cargo: 'Administrador General',
-    password: 'admin' // En un entorno real esto iría encriptado
+    password: 'admin'
 };
 
-// Datos iniciales de prueba
 const initialTeachers = [
     {
         id: 't-1',
@@ -67,7 +66,7 @@ const initialCourses = [
                         titulo: 'Variables y Tipos de Datos',
                         intensidad: '2 horas',
                         contenido: 'En esta lección aprenderemos sobre variables...',
-                        multimedia: 'https://youtube.com/...'
+                        multimedia: 'https://youtube.com/'
                     }
                 ]
             }
@@ -99,6 +98,23 @@ function ensureMainAdminExists() {
     }
 }
 
+function migratePasswords() {
+    const admins = getData(storageKeys.admins);
+    let changed = false;
+
+    const migrated = admins.map(admin => {
+        if (admin.password && !/^[0-9a-f]{8}$/.test(admin.password)) {
+            changed = true;
+            return { ...admin, password: hashPassword(admin.password) };
+        }
+        return admin;
+    });
+
+    if (changed) {
+        setData(storageKeys.admins, migrated);
+    }
+}
+
 export function initStore() {
     migrateStorageKey('lms_admins', storageKeys.admins);
     migrateStorageKey('lms_teachers', storageKeys.teachers);
@@ -109,6 +125,9 @@ export function initStore() {
     ensureArrayData(storageKeys.teachers, initialTeachers);
     ensureArrayData(storageKeys.courses, initialCourses);
     ensureMainAdminExists();
+
+    // Migrar contraseñas viejas en texto plano
+    migratePasswords();
 }
 
 // Funciones genéricas para CRUD
@@ -135,7 +154,7 @@ export function getById(key, id) {
 
 export function createItem(key, item) {
     const data = getData(key);
-    item.id = Date.now().toString(); // ID simple
+    item.id = Date.now().toString();
     data.push(item);
     setData(key, data);
     return item;
@@ -158,11 +177,17 @@ export function deleteItem(key, id) {
     setData(key, filtered);
 }
 
-// Auth
+// Auth — FIX #8: ahora compara usando hash
 export function login(email, password) {
     const admins = getData(storageKeys.admins);
     const normalizedEmail = email.trim().toLowerCase();
-    const admin = admins.find(a => a.email.toLowerCase() === normalizedEmail && a.password === password);
+    const hashedInput = hashPassword(password);
+
+    const admin = admins.find(a =>
+        a.email.toLowerCase() === normalizedEmail &&
+        a.password === hashedInput
+    );
+
     if (admin) {
         localStorage.setItem(storageKeys.currentUser, JSON.stringify(admin));
         return true;

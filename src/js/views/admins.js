@@ -1,4 +1,6 @@
 import { getData, createItem, updateItem, deleteItem } from '../store.js';
+import { hashPassword } from '../utils/hash.js';
+import { showToast } from '../utils/toast.js';
 
 export function renderAdmins(container) {
     let admins = getData('lmsAdmins');
@@ -17,16 +19,14 @@ export function renderAdmins(container) {
                 <thead>
                     <tr>
                         <th>Nombre Completo</th>
-                        <th>Identificación</th>
+                        <th class="col-hide-mobile">Identificación</th>
                         <th>Correo Electrónico</th>
-                        <th>Teléfono</th>
+                        <th class="col-hide-mobile">Teléfono</th>
                         <th>Cargo</th>
                         <th style="text-align: right;">Acciones</th>
                     </tr>
                 </thead>
-                <tbody id="admins-table-body">
-                    <!-- Filas generadas por JS -->
-                </tbody>
+                <tbody id="admins-table-body"></tbody>
             </table>
         </div>
 
@@ -38,51 +38,51 @@ export function renderAdmins(container) {
                     <span class="modal-close" id="close-modal">&times;</span>
                 </div>
                 <div class="modal-body">
-                    <form id="admin-form">
+                    <form id="admin-form" novalidate>
                         <input type="hidden" id="admin-id">
                         <div class="form-group">
-                            <label class="form-label">Identificación</label>
+                            <label class="form-label">Identificación *</label>
                             <input type="text" id="admin-identificacion" class="form-control" required>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="form-group">
-                                <label class="form-label">Nombres</label>
+                                <label class="form-label">Nombres *</label>
                                 <input type="text" id="admin-nombres" class="form-control" required>
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Apellidos</label>
+                                <label class="form-label">Apellidos *</label>
                                 <input type="text" id="admin-apellidos" class="form-control" required>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="form-group">
-                                <label class="form-label">Correo Electrónico</label>
+                                <label class="form-label">Correo Electrónico *</label>
                                 <input type="email" id="admin-email" class="form-control" required>
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Teléfono</label>
+                                <label class="form-label">Teléfono *</label>
                                 <input type="tel" id="admin-telefono" class="form-control" required>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Cargo</label>
+                            <label class="form-label">Cargo *</label>
                             <input type="text" id="admin-cargo" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Contraseña (Para acceso al sistema)</label>
-                            <input type="password" id="admin-password" class="form-control" required>
+                            <label class="form-label">Contraseña (para acceso al sistema)</label>
+                            <input type="password" id="admin-password" class="form-control" placeholder="Dejar vacío para no cambiar">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button id="btn-cancel" class="btn btn-outline">Cancelar</button>
-                    <button id="btn-save" class="btn btn-primary" form="admin-form">Guardar</button>
+                    <button id="btn-save" class="btn btn-primary">Guardar</button>
                 </div>
             </div>
         </div>
     `;
     
-    if(container) {
+    if (container) {
         container.innerHTML = html;
         renderTable();
         setupEvents();
@@ -91,29 +91,26 @@ export function renderAdmins(container) {
     function renderTable() {
         const tbody = document.getElementById('admins-table-body');
         if (admins.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center" style="color: var(--text-muted);">No hay administrativos registrados</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center" style="color: var(--text-muted); padding: 2rem;">No hay administrativos registrados</td></tr>';
             return;
         }
         
-        tbody.innerHTML = admins.map(admin => {
-            return `
-                <tr>
-                    <td>
-                        <div style="font-weight: 500;">${admin.nombres} ${admin.apellidos}</div>
-                    </td>
-                    <td>${admin.identificacion}</td>
-                    <td>${admin.email}</td>
-                    <td>${admin.telefono}</td>
-                    <td><span class="badge badge-info">${admin.cargo}</span></td>
-                    <td style="text-align: right;">
-                        <button class="btn btn-outline btn-edit" data-id="${admin.id}" style="padding: 0.25rem 0.5rem; margin-right: 0.5rem;">Editar</button>
-                        <button class="btn btn-danger btn-delete" data-id="${admin.id}" style="padding: 0.25rem 0.5rem;" ${admin.id === 'admin-1' ? 'disabled title="No se puede eliminar el admin principal"' : ''}>Eliminar</button>
-                    </td>
-                </tr>
-            `;
-        }).join('');
+        tbody.innerHTML = admins.map(admin => `
+            <tr>
+                <td>
+                    <div style="font-weight: 500;">${admin.nombres} ${admin.apellidos}</div>
+                </td>
+                <td class="col-hide-mobile">${admin.identificacion}</td>
+                <td>${admin.email}</td>
+                <td class="col-hide-mobile">${admin.telefono}</td>
+                <td><span class="badge badge-info">${admin.cargo}</span></td>
+                <td style="text-align: right; white-space: nowrap;">
+                    <button class="btn btn-outline btn-sm btn-edit" data-id="${admin.id}" style="margin-right: 0.5rem;">Editar</button>
+                    <button class="btn btn-danger btn-sm btn-delete" data-id="${admin.id}" ${admin.id === 'admin-1' ? 'disabled title="No se puede eliminar el admin principal"' : ''}>Eliminar</button>
+                </td>
+            </tr>
+        `).join('');
         
-        // Asignar eventos a botones de la tabla
         document.querySelectorAll('.btn-edit').forEach(btn => {
             btn.addEventListener('click', (e) => openModal(e.currentTarget.dataset.id));
         });
@@ -124,13 +121,15 @@ export function renderAdmins(container) {
     }
     
     function setupEvents() {
-        const modal = document.getElementById('admin-modal');
-        
         document.getElementById('btn-add-admin').addEventListener('click', () => openModal());
-        
         document.getElementById('close-modal').addEventListener('click', closeModal);
         document.getElementById('btn-cancel').addEventListener('click', closeModal);
-        
+
+        // Cerrar al hacer clic en el overlay
+        document.getElementById('admin-modal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeModal();
+        });
+
         document.getElementById('btn-save').addEventListener('click', () => {
             const form = document.getElementById('admin-form');
             if (form.checkValidity()) {
@@ -148,7 +147,6 @@ export function renderAdmins(container) {
         
         form.reset();
         document.getElementById('admin-id').value = '';
-        document.getElementById('admin-password').required = true;
         
         if (id) {
             title.textContent = 'Editar Administrativo';
@@ -161,7 +159,8 @@ export function renderAdmins(container) {
                 document.getElementById('admin-email').value = admin.email;
                 document.getElementById('admin-telefono').value = admin.telefono;
                 document.getElementById('admin-cargo').value = admin.cargo;
-                document.getElementById('admin-password').value = admin.password;
+                // No mostrar contraseña hasheada — campo vacío
+                document.getElementById('admin-password').value = '';
             }
         } else {
             title.textContent = 'Nuevo Administrativo';
@@ -176,20 +175,34 @@ export function renderAdmins(container) {
     
     function handleSave() {
         const id = document.getElementById('admin-id').value;
+        const passwordInput = document.getElementById('admin-password').value;
+
         const adminData = {
-            identificacion: document.getElementById('admin-identificacion').value,
-            nombres: document.getElementById('admin-nombres').value,
-            apellidos: document.getElementById('admin-apellidos').value,
-            email: document.getElementById('admin-email').value,
-            telefono: document.getElementById('admin-telefono').value,
-            cargo: document.getElementById('admin-cargo').value,
-            password: document.getElementById('admin-password').value
+            identificacion: document.getElementById('admin-identificacion').value.trim(),
+            nombres:        document.getElementById('admin-nombres').value.trim(),
+            apellidos:      document.getElementById('admin-apellidos').value.trim(),
+            email:          document.getElementById('admin-email').value.trim(),
+            telefono:       document.getElementById('admin-telefono').value.trim(),
+            cargo:          document.getElementById('admin-cargo').value.trim(),
         };
+
+        // FIX #8: solo hashear si el usuario escribió una contraseña nueva
+        if (passwordInput) {
+            adminData.password = hashPassword(passwordInput);
+        }
+        // Si está vacío al editar, se conserva la contraseña anterior (spread en updateItem)
         
         if (id) {
             updateItem('lmsAdmins', id, adminData);
+            showToast('Administrativo actualizado correctamente'); // FIX #10
         } else {
+            // Al crear es obligatorio tener contraseña
+            if (!passwordInput) {
+                showToast('Debes ingresar una contraseña para el nuevo administrativo.', 'warning');
+                return;
+            }
             createItem('lmsAdmins', adminData);
+            showToast('Administrativo creado correctamente'); // FIX #10
         }
         
         admins = getData('lmsAdmins');
@@ -198,15 +211,15 @@ export function renderAdmins(container) {
     }
     
     function handleDelete(id) {
-        const admin = admins.find(a => a.id === id);
-        if (admin && admin.id === 'admin-1') {
-            alert('No se puede eliminar el administrador principal.');
+        if (id === 'admin-1') {
+            showToast('No se puede eliminar el administrador principal.', 'warning');
             return;
         }
         
         if (confirm('¿Está seguro de eliminar este administrativo?')) {
             deleteItem('lmsAdmins', id);
             admins = getData('lmsAdmins');
+            showToast('Administrativo eliminado', 'danger');
             renderTable();
         }
     }
