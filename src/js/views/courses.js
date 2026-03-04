@@ -415,15 +415,16 @@ export function renderCourses(container) {
                 const form = document.getElementById('module-form');
                 if (form.checkValidity()) {
                     const idx = document.getElementById('module-index').value;
+                    const isEditingModule = idx !== '';
                     const modData = {
-                        id: idx ? course.modulos[idx].id : Date.now().toString(),
+                        id: isEditingModule ? course.modulos[idx].id : Date.now().toString(),
                         codigo: document.getElementById('module-codigo').value,
                         nombre: document.getElementById('module-nombre').value,
                         descripcion: document.getElementById('module-descripcion').value,
-                        lecciones: idx ? course.modulos[idx].lecciones : []
+                        lecciones: isEditingModule ? course.modulos[idx].lecciones : []
                     };
                     
-                    if (idx !== '') {
+                    if (isEditingModule) {
                         course.modulos[idx] = modData;
                     } else {
                         course.modulos = course.modulos || [];
@@ -486,9 +487,10 @@ export function renderCourses(container) {
                 if (form.checkValidity()) {
                     const mIdx = document.getElementById('lesson-mindex').value;
                     const lIdx = document.getElementById('lesson-lindex').value;
+                    const isEditingLesson = lIdx !== '';
                     
                     const lecData = {
-                        id: lIdx ? course.modulos[mIdx].lecciones[lIdx].id : Date.now().toString(),
+                        id: isEditingLesson ? course.modulos[mIdx].lecciones[lIdx].id : Date.now().toString(),
                         titulo: document.getElementById('lesson-titulo').value,
                         intensidad: document.getElementById('lesson-intensidad').value,
                         contenido: document.getElementById('lesson-contenido').value,
@@ -497,7 +499,7 @@ export function renderCourses(container) {
                     
                     course.modulos[mIdx].lecciones = course.modulos[mIdx].lecciones || [];
                     
-                    if (lIdx !== '') {
+                    if (isEditingLesson) {
                         course.modulos[mIdx].lecciones[lIdx] = lecData;
                     } else {
                         course.modulos[mIdx].lecciones.push(lecData);

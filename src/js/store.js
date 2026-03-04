@@ -1,5 +1,12 @@
 // store.js - Manejo de LocalStorage
 
+const storageKeys = {
+    admins: 'lmsAdmins',
+    teachers: 'lmsTeachers',
+    courses: 'lmsCourses',
+    currentUser: 'lmsCurrentUser',
+};
+
 const defaultAdmin = {
     id: 'admin-1',
     identificacion: '123456789',
@@ -76,21 +83,32 @@ function migrateStorageKey(oldKey, newKey) {
     }
 }
 
-export function initStore() {
-    migrateStorageKey('lms_admins', 'lmsAdmins');
-    migrateStorageKey('lms_teachers', 'lmsTeachers');
-    migrateStorageKey('lms_courses', 'lmsCourses');
-    migrateStorageKey('lms_currentUser', 'lmsCurrentUser');
+function ensureArrayData(key, fallback) {
+    const currentData = getData(key);
+    if (currentData.length === 0) {
+        localStorage.setItem(key, JSON.stringify(fallback));
+    }
+}
 
-    if (!localStorage.getItem('lmsAdmins')) {
-        localStorage.setItem('lmsAdmins', JSON.stringify([defaultAdmin]));
+function ensureMainAdminExists() {
+    const admins = getData(storageKeys.admins);
+    const existsMainAdmin = admins.some(admin => admin.id === defaultAdmin.id);
+    if (!existsMainAdmin) {
+        admins.unshift(defaultAdmin);
+        setData(storageKeys.admins, admins);
     }
-    if (!localStorage.getItem('lmsTeachers')) {
-        localStorage.setItem('lmsTeachers', JSON.stringify(initialTeachers));
-    }
-    if (!localStorage.getItem('lmsCourses')) {
-        localStorage.setItem('lmsCourses', JSON.stringify(initialCourses));
-    }
+}
+
+export function initStore() {
+    migrateStorageKey('lms_admins', storageKeys.admins);
+    migrateStorageKey('lms_teachers', storageKeys.teachers);
+    migrateStorageKey('lms_courses', storageKeys.courses);
+    migrateStorageKey('lms_currentUser', storageKeys.currentUser);
+
+    ensureArrayData(storageKeys.admins, [defaultAdmin]);
+    ensureArrayData(storageKeys.teachers, initialTeachers);
+    ensureArrayData(storageKeys.courses, initialCourses);
+    ensureMainAdminExists();
 }
 
 // Funciones genéricas para CRUD
@@ -142,21 +160,22 @@ export function deleteItem(key, id) {
 
 // Auth
 export function login(email, password) {
-    const admins = getData('lmsAdmins');
-    const admin = admins.find(a => a.email === email && a.password === password);
+    const admins = getData(storageKeys.admins);
+    const normalizedEmail = email.trim().toLowerCase();
+    const admin = admins.find(a => a.email.toLowerCase() === normalizedEmail && a.password === password);
     if (admin) {
-        localStorage.setItem('lmsCurrentUser', JSON.stringify(admin));
+        localStorage.setItem(storageKeys.currentUser, JSON.stringify(admin));
         return true;
     }
     return false;
 }
 
 export function logout() {
-    localStorage.removeItem('lmsCurrentUser');
+    localStorage.removeItem(storageKeys.currentUser);
 }
 
 export function getCurrentUser() {
-    const user = localStorage.getItem('lmsCurrentUser');
+    const user = localStorage.getItem(storageKeys.currentUser);
     if (!user) return null;
     try {
         const parsed = JSON.parse(user);

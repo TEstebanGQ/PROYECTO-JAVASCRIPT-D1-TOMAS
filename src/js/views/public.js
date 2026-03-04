@@ -8,7 +8,7 @@ export function renderPublicView(container) {
         <header class="public-header">
             <div class="container public-nav">
                 <div class="flex items-center gap-2">
-                    <img src="../../img/icons/icon1.png" alt="Logo" style="width: 32px; height: 32px;">
+                    <img src="/img/icons/icon1.png" alt="Logo" style="width: 32px; height: 32px;">
                     <span style="font-size: 1.25rem; font-weight: 600;">LMS Institución ABC</span>
                 </div>
                 <nav>
@@ -58,7 +58,7 @@ export function renderPublicView(container) {
             </div>
         </section>
 
-        <div id="public-course-modal" class="modal-overlay">
+        <div id="public-course-modal" class="modal-overlay" tabindex="-1">
             <div class="modal-content public-course-modal-content">
                 <div class="modal-header">
                     <h2 id="public-course-modal-title" class="modal-title">Detalle del curso</h2>
@@ -153,6 +153,7 @@ export function renderPublicView(container) {
             </div>
         `;
         modal.classList.add('active');
+        modal.focus();
     };
 
     document.querySelectorAll('.public-course-card').forEach(card => {
@@ -169,7 +170,7 @@ export function renderPublicView(container) {
     modal.addEventListener('click', (event) => {
         if (event.target === modal) closeModal();
     });
-    document.addEventListener('keydown', (event) => {
+    modal.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && modal.classList.contains('active')) {
             closeModal();
         }

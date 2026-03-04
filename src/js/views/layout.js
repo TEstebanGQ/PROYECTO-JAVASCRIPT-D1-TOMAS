@@ -19,12 +19,12 @@ export function renderLayout(renderContent) {
         <div class="app-layout">
             <aside class="sidebar">
                 <div class="sidebar-header">
-                    <img src="../../img/icons/icon1.png" alt="Logo" style="width: 32px; height: 32px;">
+                    <img src="/img/icons/icon1.png" alt="Logo" style="width: 32px; height: 32px;">
                     <div class="sidebar-title">LMS Admin</div>
                 </div>
                 <nav class="sidebar-nav">
                     <a href="/dashboard" class="nav-item ${window.location.pathname === '/dashboard' ? 'active' : ''}" data-link>
-                        <svg xmlns="    " width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
                         Dashboard
                     </a>
                     <a href="/courses" class="nav-item ${window.location.pathname === '/courses' ? 'active' : ''}" data-link>

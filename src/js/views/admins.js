@@ -107,7 +107,7 @@ export function renderAdmins(container) {
                     <td><span class="badge badge-info">${admin.cargo}</span></td>
                     <td style="text-align: right;">
                         <button class="btn btn-outline btn-edit" data-id="${admin.id}" style="padding: 0.25rem 0.5rem; margin-right: 0.5rem;">Editar</button>
-                        <button class="btn btn-danger btn-delete" data-id="${admin.id}" style="padding: 0.25rem 0.5rem;" ${admin.email === 'admin@abc.edu' ? 'disabled title="No se puede eliminar el admin principal"' : ''}>Eliminar</button>
+                        <button class="btn btn-danger btn-delete" data-id="${admin.id}" style="padding: 0.25rem 0.5rem;" ${admin.id === 'admin-1' ? 'disabled title="No se puede eliminar el admin principal"' : ''}>Eliminar</button>
                     </td>
                 </tr>
             `;
@@ -199,7 +199,7 @@ export function renderAdmins(container) {
     
     function handleDelete(id) {
         const admin = admins.find(a => a.id === id);
-        if (admin && admin.email === 'admin@abc.edu') {
+        if (admin && admin.id === 'admin-1') {
             alert('No se puede eliminar el administrador principal.');
             return;
         }
