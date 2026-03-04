@@ -1,8 +1,8 @@
 import { getData } from '../store.js';
 
 export function renderPublicView(container) {
-    const courses = getData('lms_courses').filter(c => c.visibilidad === 'Publico');
-    const teachers = getData('lms_teachers');
+    const courses = getData('lmsCourses').filter(c => c.visibilidad === 'Publico');
+    const teachers = getData('lmsTeachers');
     
     const html = `
         <header class="public-header">

@@ -1,8 +1,8 @@
 import { getData, createItem, updateItem, deleteItem } from '../store.js';
 
 export function renderCourses(container) {
-    let courses = getData('lms_courses');
-    let teachers = getData('lms_teachers');
+    let courses = getData('lmsCourses');
+    let teachers = getData('lmsTeachers');
     
     // Estado para navegación interna (lista vs detalle/edición)
     let currentView = 'list'; // 'list', 'edit'
@@ -139,8 +139,8 @@ export function renderCourses(container) {
         document.querySelectorAll('.btn-delete-course').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 if (confirm('¿Está seguro de eliminar este curso?')) {
-                    deleteItem('lms_courses', e.currentTarget.dataset.id);
-                    courses = getData('lms_courses');
+                    deleteItem('lmsCourses', e.currentTarget.dataset.id);
+                    courses = getData('lmsCourses');
                     renderTable();
                 }
             });
@@ -363,13 +363,13 @@ export function renderCourses(container) {
                 };
                 
                 if (currentCourseId) {
-                    updateItem('lms_courses', currentCourseId, courseData);
+                    updateItem('lmsCourses', currentCourseId, courseData);
                 } else {
-                    const newCourse = createItem('lms_courses', courseData);
+                    const newCourse = createItem('lmsCourses', courseData);
                     currentCourseId = newCourse.id;
                 }
                 
-                courses = getData('lms_courses');
+                courses = getData('lmsCourses');
                 alert('Curso guardado exitosamente');
                 renderMain(); // Recargar para mostrar panel de módulos si era nuevo
             } else {
@@ -404,8 +404,8 @@ export function renderCourses(container) {
                     if(confirm('¿Eliminar este módulo y sus lecciones?')) {
                         const idx = e.currentTarget.dataset.index;
                         course.modulos.splice(idx, 1);
-                        updateItem('lms_courses', course.id, course);
-                        courses = getData('lms_courses');
+                        updateItem('lmsCourses', course.id, course);
+                        courses = getData('lmsCourses');
                         renderMain();
                     }
                 });
@@ -430,8 +430,8 @@ export function renderCourses(container) {
                         course.modulos.push(modData);
                     }
                     
-                    updateItem('lms_courses', course.id, course);
-                    courses = getData('lms_courses');
+                    updateItem('lmsCourses', course.id, course);
+                    courses = getData('lmsCourses');
                     document.getElementById('module-modal').classList.remove('active');
                     renderMain();
                 } else {
@@ -474,8 +474,8 @@ export function renderCourses(container) {
                         const mIdx = e.currentTarget.dataset.mindex;
                         const lIdx = e.currentTarget.dataset.lindex;
                         course.modulos[mIdx].lecciones.splice(lIdx, 1);
-                        updateItem('lms_courses', course.id, course);
-                        courses = getData('lms_courses');
+                        updateItem('lmsCourses', course.id, course);
+                        courses = getData('lmsCourses');
                         renderMain();
                     }
                 });
@@ -503,8 +503,8 @@ export function renderCourses(container) {
                         course.modulos[mIdx].lecciones.push(lecData);
                     }
                     
-                    updateItem('lms_courses', course.id, course);
-                    courses = getData('lms_courses');
+                    updateItem('lmsCourses', course.id, course);
+                    courses = getData('lmsCourses');
                     document.getElementById('lesson-modal').classList.remove('active');
                     renderMain();
                 } else {

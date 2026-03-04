@@ -1,8 +1,8 @@
 import { getData, createItem, updateItem, deleteItem } from '../store.js';
 
 export function renderTeachers(container) {
-    let teachers = getData('lms_teachers');
-    let courses = getData('lms_courses');
+    let teachers = getData('lmsTeachers');
+    let courses = getData('lmsCourses');
     
     const html = `
         <div class="page-header">
@@ -203,12 +203,12 @@ export function renderTeachers(container) {
         };
         
         if (id) {
-            updateItem('lms_teachers', id, teacherData);
+            updateItem('lmsTeachers', id, teacherData);
         } else {
-            createItem('lms_teachers', teacherData);
+            createItem('lmsTeachers', teacherData);
         }
         
-        teachers = getData('lms_teachers');
+        teachers = getData('lmsTeachers');
         renderTable();
         closeModal();
     }
@@ -222,8 +222,8 @@ export function renderTeachers(container) {
         }
         
         if (confirm('¿Está seguro de eliminar este docente?')) {
-            deleteItem('lms_teachers', id);
-            teachers = getData('lms_teachers');
+            deleteItem('lmsTeachers', id);
+            teachers = getData('lmsTeachers');
             renderTable();
         }
     }

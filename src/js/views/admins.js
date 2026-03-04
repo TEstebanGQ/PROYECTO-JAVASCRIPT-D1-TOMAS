@@ -1,7 +1,7 @@
 import { getData, createItem, updateItem, deleteItem } from '../store.js';
 
 export function renderAdmins(container) {
-    let admins = getData('lms_admins');
+    let admins = getData('lmsAdmins');
     
     const html = `
         <div class="page-header">
@@ -187,12 +187,12 @@ export function renderAdmins(container) {
         };
         
         if (id) {
-            updateItem('lms_admins', id, adminData);
+            updateItem('lmsAdmins', id, adminData);
         } else {
-            createItem('lms_admins', adminData);
+            createItem('lmsAdmins', adminData);
         }
         
-        admins = getData('lms_admins');
+        admins = getData('lmsAdmins');
         renderTable();
         closeModal();
     }
@@ -205,8 +205,8 @@ export function renderAdmins(container) {
         }
         
         if (confirm('¿Está seguro de eliminar este administrativo?')) {
-            deleteItem('lms_admins', id);
-            admins = getData('lms_admins');
+            deleteItem('lmsAdmins', id);
+            admins = getData('lmsAdmins');
             renderTable();
         }
     }

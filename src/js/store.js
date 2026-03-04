@@ -1,6 +1,6 @@
 // store.js - Manejo de LocalStorage
 
-const DEFAULT_ADMIN = {
+const defaultAdmin = {
     id: 'admin-1',
     identificacion: '123456789',
     nombres: 'Admin',
@@ -12,7 +12,7 @@ const DEFAULT_ADMIN = {
 };
 
 // Datos iniciales de prueba
-const INITIAL_TEACHERS = [
+const initialTeachers = [
     {
         id: 't-1',
         codigo: 'DOC-001',
@@ -35,7 +35,7 @@ const INITIAL_TEACHERS = [
     }
 ];
 
-const INITIAL_COURSES = [
+const initialCourses = [
     {
         id: 'c-1',
         codigo: 'CUR-001',
@@ -68,15 +68,28 @@ const INITIAL_COURSES = [
     }
 ];
 
+function migrateStorageKey(oldKey, newKey) {
+    const oldValue = localStorage.getItem(oldKey);
+    const newValue = localStorage.getItem(newKey);
+    if (oldValue && !newValue) {
+        localStorage.setItem(newKey, oldValue);
+    }
+}
+
 export function initStore() {
-    if (!localStorage.getItem('lms_admins')) {
-        localStorage.setItem('lms_admins', JSON.stringify([DEFAULT_ADMIN]));
+    migrateStorageKey('lms_admins', 'lmsAdmins');
+    migrateStorageKey('lms_teachers', 'lmsTeachers');
+    migrateStorageKey('lms_courses', 'lmsCourses');
+    migrateStorageKey('lms_currentUser', 'lmsCurrentUser');
+
+    if (!localStorage.getItem('lmsAdmins')) {
+        localStorage.setItem('lmsAdmins', JSON.stringify([defaultAdmin]));
     }
-    if (!localStorage.getItem('lms_teachers')) {
-        localStorage.setItem('lms_teachers', JSON.stringify(INITIAL_TEACHERS));
+    if (!localStorage.getItem('lmsTeachers')) {
+        localStorage.setItem('lmsTeachers', JSON.stringify(initialTeachers));
     }
-    if (!localStorage.getItem('lms_courses')) {
-        localStorage.setItem('lms_courses', JSON.stringify(INITIAL_COURSES));
+    if (!localStorage.getItem('lmsCourses')) {
+        localStorage.setItem('lmsCourses', JSON.stringify(initialCourses));
     }
 }
 
@@ -129,21 +142,21 @@ export function deleteItem(key, id) {
 
 // Auth
 export function login(email, password) {
-    const admins = getData('lms_admins');
+    const admins = getData('lmsAdmins');
     const admin = admins.find(a => a.email === email && a.password === password);
     if (admin) {
-        localStorage.setItem('lms_currentUser', JSON.stringify(admin));
+        localStorage.setItem('lmsCurrentUser', JSON.stringify(admin));
         return true;
     }
     return false;
 }
 
 export function logout() {
-    localStorage.removeItem('lms_currentUser');
+    localStorage.removeItem('lmsCurrentUser');
 }
 
 export function getCurrentUser() {
-    const user = localStorage.getItem('lms_currentUser');
+    const user = localStorage.getItem('lmsCurrentUser');
     if (!user) return null;
     try {
         const parsed = JSON.parse(user);

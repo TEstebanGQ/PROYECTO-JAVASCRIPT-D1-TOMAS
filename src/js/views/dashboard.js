@@ -1,9 +1,9 @@
 import { getData } from '../store.js';
 
 export function renderDashboard(container) {
-    const courses = getData('lms_courses');
-    const teachers = getData('lms_teachers');
-    const admins = getData('lms_admins');
+    const courses = getData('lmsCourses');
+    const teachers = getData('lmsTeachers');
+    const admins = getData('lmsAdmins');
     
     const activeCourses = courses.filter(c => c.estado === 'Activo').length;
     
