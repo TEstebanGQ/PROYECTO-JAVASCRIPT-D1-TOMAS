@@ -16,8 +16,11 @@ export function renderLayout(renderContent) {
     const userInitial = userName.charAt(0).toUpperCase();
     
     const layoutHTML = `
+        <!-- Overlay para cerrar sidebar en móvil -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
         <div class="app-layout">
-            <aside class="sidebar">
+            <aside class="sidebar" id="sidebar">
                 <div class="sidebar-header">
                     <img src="/img/icons/icon1.png" alt="Logo" style="width: 32px; height: 32px;">
                     <div class="sidebar-title">LMS Admin</div>
@@ -47,7 +50,7 @@ export function renderLayout(renderContent) {
                         </div>
                         <div>
                             <div style="font-size: 0.875rem; font-weight: 500; color: white;">${userName}</div>
-                            <div style="font-size: 0.75rem;">${userCargo}</div>
+                            <div style="font-size: 0.75rem; color: var(--sidebar-text);">${userCargo}</div>
                         </div>
                     </div>
                     <button id="logout-btn" class="btn btn-outline" style="width: 100%; color: white; border-color: rgba(255,255,255,0.2);">
@@ -56,17 +59,30 @@ export function renderLayout(renderContent) {
                     </button>
                 </div>
             </aside>
+
             <main class="main-content">
                 <header class="topbar">
-                    <div style="font-weight: 500; color: var(--text-muted);">
-                        Panel de Administración
+                    <div class="topbar-left">
+                        <!-- Botón hamburguesa — solo visible en móvil via CSS -->
+                        <button class="btn-hamburger" id="btn-hamburger" aria-label="Abrir menú">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="4" x2="20" y1="6"  y2="6"/>
+                                <line x1="4" x2="20" y1="12" y2="12"/>
+                                <line x1="4" x2="20" y1="18" y2="18"/>
+                            </svg>
+                        </button>
+                        <div class="topbar-title">Panel de Administración</div>
                     </div>
                     <div class="flex items-center gap-4">
-                        <a href="/" class="btn btn-outline" data-link>Ver Sitio Público</a>
+                        <a href="/" class="btn btn-outline" data-link>
+                            <span>Ver Sitio Público</span>
+                        </a>
                     </div>
                 </header>
                 <div class="page-content" id="page-content">
-                    <!-- Content will be injected here -->
+                    <!-- Contenido de la vista se inyecta aquí -->
                 </div>
             </main>
         </div>
@@ -74,12 +90,45 @@ export function renderLayout(renderContent) {
     
     app.innerHTML = layoutHTML;
     
-    // Configurar eventos
     document.getElementById('logout-btn').addEventListener('click', () => {
         logout();
         navigateTo('/login');
     });
-    
-    // Renderizar el contenido específico de la vista
+    const sidebar        = document.getElementById('sidebar');
+    const btnHamburger   = document.getElementById('btn-hamburger');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+    function openSidebar() {
+        sidebar.classList.add('open');
+        sidebarOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden'; // evita scroll del fondo
+    }
+
+    function closeSidebar() {
+        sidebar.classList.remove('open');
+        sidebarOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    btnHamburger.addEventListener('click', () => {
+        const isOpen = sidebar.classList.contains('open');
+        isOpen ? closeSidebar() : openSidebar();
+    });
+
+    sidebarOverlay.addEventListener('click', closeSidebar);
+
+    sidebar.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+            if (sidebarOverlay.classList.contains('active')) {
+                closeSidebar();
+            }
+        });
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+            closeSidebar();
+        }
+    });
     renderContent(document.getElementById('page-content'));
 }
