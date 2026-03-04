@@ -1,4 +1,4 @@
-import { getData, createItem, updateItem, deleteItem } from '../src/js/store.js';
+import { getData, createItem, updateItem, deleteItem } from '../store.js';
 
 export function renderTeachers(container) {
     let teachers = getData('lms_teachers');
@@ -75,6 +75,7 @@ export function renderTeachers(container) {
                                 <option value="Informática">Informática</option>
                                 <option value="Idiomas">Idiomas</option>
                                 <option value="Artes">Artes</option>
+                                <option value="Biología">Biología</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -135,7 +136,7 @@ export function renderTeachers(container) {
         });
         
         document.querySelectorAll('.btn-delete').forEach(btn => {
-            btn.addEventListener('click', (e) => handleDelete(e.target.dataset.id));
+            btn.addEventListener('click', (e) => handleDelete(e.currentTarget.dataset.id));
         });
     }
     

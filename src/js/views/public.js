@@ -1,4 +1,4 @@
-import { getData } from '../src/js/store.js';
+import { getData } from '../store.js';
 
 export function renderPublicView(container) {
     const courses = getData('lms_courses').filter(c => c.visibilidad === 'Publico');
