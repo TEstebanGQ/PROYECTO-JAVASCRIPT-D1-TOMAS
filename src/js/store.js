@@ -82,7 +82,15 @@ export function initStore() {
 
 // Funciones genéricas para CRUD
 export function getData(key) {
-    return JSON.parse(localStorage.getItem(key)) || [];
+    const raw = localStorage.getItem(key);
+    if (!raw) return [];
+    try {
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+        console.error(`Error al leer ${key} desde localStorage:`, error);
+        return [];
+    }
 }
 
 export function setData(key, data) {
@@ -136,7 +144,14 @@ export function logout() {
 
 export function getCurrentUser() {
     const user = localStorage.getItem('lms_currentUser');
-    return user ? JSON.parse(user) : null;
+    if (!user) return null;
+    try {
+        const parsed = JSON.parse(user);
+        return parsed && typeof parsed === 'object' ? parsed : null;
+    } catch (error) {
+        console.error('Error al leer la sesión actual:', error);
+        return null;
+    }
 }
 
 export function isAuthenticated() {

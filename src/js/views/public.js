@@ -8,7 +8,7 @@ export function renderPublicView(container) {
         <header class="public-header">
             <div class="container public-nav">
                 <div class="flex items-center gap-2">
-                    <div style="width: 32px; height: 32px; background-color: var(--primary); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">ABC</div>
+                    <img src="../../img/icons/icon1.png" alt="Logo" style="width: 32px; height: 32px;">
                     <span style="font-size: 1.25rem; font-weight: 600;">LMS Institución ABC</span>
                 </div>
                 <nav>

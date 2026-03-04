@@ -132,7 +132,7 @@ export function renderTeachers(container) {
         
         // Asignar eventos a botones de la tabla
         document.querySelectorAll('.btn-edit').forEach(btn => {
-            btn.addEventListener('click', (e) => openModal(e.target.dataset.id));
+            btn.addEventListener('click', (e) => openModal(e.currentTarget.dataset.id));
         });
         
         document.querySelectorAll('.btn-delete').forEach(btn => {

@@ -130,7 +130,7 @@ export function renderCourses(container) {
         
         document.querySelectorAll('.btn-edit-course').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                currentCourseId = e.target.dataset.id;
+                currentCourseId = e.currentTarget.dataset.id;
                 currentView = 'edit';
                 renderMain();
             });
@@ -139,7 +139,7 @@ export function renderCourses(container) {
         document.querySelectorAll('.btn-delete-course').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 if (confirm('¿Está seguro de eliminar este curso?')) {
-                    deleteItem('lms_courses', e.target.dataset.id);
+                    deleteItem('lms_courses', e.currentTarget.dataset.id);
                     courses = getData('lms_courses');
                     renderTable();
                 }

@@ -5,16 +5,26 @@ export function renderLayout(renderContent) {
     const app = document.getElementById('app');
     const user = getCurrentUser();
     
+    if (!user || typeof user.nombres !== 'string' || user.nombres.trim() === '') {
+        logout();
+        navigateTo('/login');
+        return;
+    }
+    
+    const userName = user.nombres.trim();
+    const userCargo = typeof user.cargo === 'string' && user.cargo.trim() !== '' ? user.cargo : 'Administrador';
+    const userInitial = userName.charAt(0).toUpperCase();
+    
     const layoutHTML = `
         <div class="app-layout">
             <aside class="sidebar">
                 <div class="sidebar-header">
-                    <div class="sidebar-logo">ABC</div>
+                    <img src="../../img/icons/icon1.png" alt="Logo" style="width: 32px; height: 32px;">
                     <div class="sidebar-title">LMS Admin</div>
                 </div>
                 <nav class="sidebar-nav">
                     <a href="/dashboard" class="nav-item ${window.location.pathname === '/dashboard' ? 'active' : ''}" data-link>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+                        <svg xmlns="    " width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
                         Dashboard
                     </a>
                     <a href="/courses" class="nav-item ${window.location.pathname === '/courses' ? 'active' : ''}" data-link>
@@ -33,11 +43,11 @@ export function renderLayout(renderContent) {
                 <div class="sidebar-footer">
                     <div class="flex items-center gap-2 mb-4">
                         <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">
-                            ${user.nombres.charAt(0)}
+                            ${userInitial}
                         </div>
                         <div>
-                            <div style="font-size: 0.875rem; font-weight: 500; color: white;">${user.nombres}</div>
-                            <div style="font-size: 0.75rem;">${user.cargo}</div>
+                            <div style="font-size: 0.875rem; font-weight: 500; color: white;">${userName}</div>
+                            <div style="font-size: 0.75rem;">${userCargo}</div>
                         </div>
                     </div>
                     <button id="logout-btn" class="btn btn-outline" style="width: 100%; color: white; border-color: rgba(255,255,255,0.2);">
