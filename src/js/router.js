@@ -3,7 +3,7 @@ import { renderPublicView } from './views/public.js';
 import { renderLoginView } from './views/login.js';
 import { renderLayout } from './views/layout.js';
 import { renderDashboard } from './views/dashboard.js';
-import { renderCourses } from '../../courses.js';
+import { renderCourses } from './views/courses/index.js';
 import { renderTeachers } from './views/teachers.js';
 import { renderAdmins } from './views/admins.js';
 

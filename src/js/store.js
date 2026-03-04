@@ -1,4 +1,4 @@
-// store.js - Manejo de LocalStorage
+import { hashPassword, verifyPassword } from './utils/hash.js';
 
 const storageKeys = {
     admins: 'lmsAdmins',
