@@ -1,0 +1,244 @@
+/* ============================================
+   RESPONSIVE - Mobile First
+   Breakpoints:
+     sm:  480px  → Móvil grande
+     md:  768px  → Tablet
+     lg:  1024px → Desktop
+     xl:  1280px → Wide screen
+   ============================================ */
+
+/* ---- md: grid helpers (tablet+) ---- */
+@media (min-width: 768px) {
+    .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .md\:col-span-2  { grid-column: span 2 / span 2; }
+
+    .public-course-detail-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* ============================================
+   MOBILE — hasta 1023px
+   ============================================ */
+@media (max-width: 1023px) {
+
+    /* Sidebar se sale del flujo */
+    .sidebar {
+        transform: translateX(calc(-1 * var(--sidebar-width)));
+        box-shadow: none;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+        box-shadow: var(--shadow-lg);
+    }
+
+    /* Main ocupa todo el ancho */
+    .main-content {
+        margin-left: 0;
+    }
+
+    /* Aparece el botón hamburguesa */
+    .btn-hamburger {
+        display: flex;
+    }
+
+    /* Topbar más compacta */
+    .topbar {
+        padding: 0 1rem;
+    }
+
+    /* Page content con menos padding */
+    .page-content {
+        padding: 1.25rem 1rem;
+    }
+
+    /* Page header en columna si hay poco espacio */
+    .page-header {
+        margin-bottom: 1.25rem;
+    }
+
+    .page-title {
+        font-size: 1.25rem;
+    }
+}
+
+/* ============================================
+   TABLET — 768px a 1023px
+   ============================================ */
+@media (min-width: 768px) and (max-width: 1023px) {
+
+    .page-content {
+        padding: 1.5rem;
+    }
+
+    .public-hero h1 {
+        font-size: 2.25rem;
+    }
+
+    /* En edición de cursos, columnas más balanceadas */
+    .course-edit-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================
+   MÓVIL — hasta 767px
+   ============================================ */
+@media (max-width: 767px) {
+
+    /* Hero público */
+    .public-hero {
+        padding: 3rem 0;
+    }
+
+    .public-hero h1 {
+        font-size: 1.75rem;
+    }
+
+    .public-hero p {
+        font-size: 1rem;
+    }
+
+    /* Grids a 1 columna en móvil */
+    .grid-cols-2,
+    .grid-cols-3,
+    .grid-cols-4 {
+        grid-template-columns: 1fr;
+    }
+
+    /* Cards con menos padding */
+    .card {
+        padding: 1rem;
+    }
+
+    /* Tabla con scroll horizontal */
+    .table-container {
+        border-radius: var(--radius-md);
+    }
+
+    .table th,
+    .table td {
+        padding: 0.625rem 0.75rem;
+    }
+
+    /* Ocultar columnas secundarias en tablas */
+    .table .col-hide-mobile {
+        display: none;
+    }
+
+    /* Modal ocupa casi toda la pantalla */
+    .modal-overlay {
+        align-items: flex-end;
+        padding: 0;
+    }
+
+    .modal-content {
+        max-width: 100%;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        max-height: 92vh;
+        transform: translateY(100%);
+    }
+
+    .modal-overlay.active .modal-content {
+        transform: translateY(0);
+    }
+
+    /* Login */
+    .login-card {
+        padding: 2rem 1.25rem;
+        border-radius: var(--radius-lg);
+    }
+
+    /* Página de cursos: formulario en 1 col */
+    .grid-cols-2.gap-4,
+    .grid-cols-3.gap-4 {
+        grid-template-columns: 1fr;
+    }
+
+    /* Toast abajo al centro en móvil */
+    .toast {
+        right: 1rem;
+        left: 1rem;
+        bottom: 1rem;
+        text-align: center;
+    }
+
+    /* Botones de acciones en tabla más pequeños */
+    .btn-sm {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.7rem;
+    }
+
+    /* Dashboard: stat cards apilados */
+    .stat-card {
+        gap: 0.75rem;
+    }
+
+    .stat-value {
+        font-size: 1.375rem;
+    }
+
+    /* Page header en col en móvil */
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    /* Filtros de cursos: apilados */
+    .filter-bar .grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Public nav */
+    .public-nav .btn {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.75rem;
+    }
+}
+
+/* ============================================
+   MÓVIL PEQUEÑO — hasta 479px
+   ============================================ */
+@media (max-width: 479px) {
+    .public-hero h1 {
+        font-size: 1.5rem;
+    }
+
+    .login-card {
+        padding: 1.5rem 1rem;
+    }
+
+    .page-content {
+        padding: 1rem 0.75rem;
+    }
+
+    .topbar {
+        padding: 0 0.75rem;
+    }
+
+    /* Ocultar texto en botones de la topbar */
+    .topbar .btn-outline span {
+        display: none;
+    }
+}
+
+/* ============================================
+   WIDE SCREEN — 1280px+
+   ============================================ */
+@media (min-width: 1280px) {
+    .container {
+        max-width: 1320px;
+    }
+
+    .page-content {
+        padding: 2.5rem 3rem;
+    }
+
+    .public-hero h1 {
+        font-size: 3.25rem;
+    }
+}
