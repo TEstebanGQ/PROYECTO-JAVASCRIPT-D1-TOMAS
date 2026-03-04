@@ -364,9 +364,13 @@ input, select, textarea {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--bg-body);
     padding: 1rem;
+    background-image: url('../../img/fondo/fondo1.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
+
 
 .login-card {
     width: 100%;
@@ -410,12 +414,13 @@ input, select, textarea {
 
 /* PUBLIC VIEW */
 .public-header {
-    background-color: var(--bg-card);
-    border-bottom: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.9);
+    border-bottom: 1px solid rgba(16, 185, 129, 0.15);
     padding: 1rem 0;
     position: sticky;
     top: 0;
     z-index: 30;
+    backdrop-filter: blur(10px);
 }
 
 .public-nav {
@@ -425,23 +430,101 @@ input, select, textarea {
 }
 
 .public-hero {
-    background-color: var(--sidebar-bg);
+    background:
+        radial-gradient(circle at 15% 20%, rgba(16, 185, 129, 0.35), transparent 35%),
+        radial-gradient(circle at 85% 80%, rgba(59, 130, 246, 0.18), transparent 45%),
+        linear-gradient(120deg, #0f172a 0%, #111827 45%, #0b1324 100%);
     color: white;
-    padding: 4rem 0;
+    padding: 5rem 0;
     text-align: center;
 }
 
 .public-hero h1 {
-    font-size: 2.5rem;
+    font-size: 2.7rem;
     font-weight: 700;
     margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
 }
 
 .public-hero p {
     font-size: 1.125rem;
-    color: var(--sidebar-text);
+    color: #d1d5db;
     max-width: 600px;
     margin: 0 auto 2rem;
+}
+
+.public-course-card {
+    cursor: pointer;
+    border: 1px solid #0c0c0c;
+    box-shadow: 0 10px 24px -18px rgba(15, 23, 42, 0.8);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.public-course-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(16, 185, 129, 0.35);
+    box-shadow: 0 22px 34px -22px rgba(15, 23, 42, 0.7);
+}
+
+.public-course-card:focus-visible {
+    outline: 3px solid var(--primary-light);
+    outline-offset: 2px;
+}
+
+.public-course-modal-content {
+    max-width: 860px;
+    border: 1px solid rgba(16, 185, 129, 0.18);
+}
+
+.public-course-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.public-course-detail-grid p {
+    margin-bottom: 0.5rem;
+}
+
+.public-module-card {
+    border: 1px solid #dbe2ea;
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+    box-shadow: 0 8px 20px -18px rgba(15, 23, 42, 0.9);
+}
+
+.public-module-card h4 {
+    margin-bottom: 0.5rem;
+}
+
+.public-lessons-list {
+    list-style: disc;
+    margin-left: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.public-lessons-list li p {
+    margin-top: 0.25rem;
+}
+
+.public-lessons-list a {
+    color: #0f766e;
+    font-weight: 600;
+}
+
+.public-lessons-list a:hover {
+    text-decoration: underline;
+}
+
+@media (min-width: 768px) {
+    .public-course-detail-grid {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
 /* MODAL */
@@ -476,6 +559,7 @@ input, select, textarea {
     box-shadow: var(--shadow-lg);
     transform: translateY(20px);
     transition: var(--transition);
+    border: 1px solid rgba(15, 23, 42, 0.08);
 }
 
 .modal-overlay.active .modal-content {
@@ -484,15 +568,17 @@ input, select, textarea {
 
 .modal-header {
     padding: 1.5rem;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid #e5e7eb;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
 }
 
 .modal-title {
     font-size: 1.25rem;
     font-weight: 600;
+    letter-spacing: -0.01em;
 }
 
 .modal-close {
@@ -503,14 +589,16 @@ input, select, textarea {
 
 .modal-body {
     padding: 1.5rem;
+    color: #334155;
 }
 
 .modal-footer {
     padding: 1.5rem;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid #e5e7eb;
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
+    background: #fcfcfd;
 }
 
 /* UTILS */
