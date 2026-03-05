@@ -24,7 +24,6 @@
     --text-muted: #6b7280;
 
     /* Bordes y Sombras */
-    /* FIX #2: era #050505 (casi negro), ahora un gris suave */
     --border-color: #000000;
     --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05);
     --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
@@ -44,11 +43,9 @@
 
     /* Topbar */
     --topbar-height: 64px;
-
-    /* Z-index */
-    --z-sidebar:  40;
+    --z-sidebar:  50;   /* ✅ mayor que el overlay */
     --z-topbar:   30;
-    --z-modal:    50;
+    --z-modal:    60;
     --z-toast:    9999;
-    --z-overlay:  45;
+    --z-overlay:  45;   /* queda detrás del sidebar pero sobre el contenido */
 }

@@ -7,20 +7,40 @@ import { showToast } from '../../utils/toast.js';
 import { renderLessons } from './lessons.js';
 
 /**
+ * Formatea un número de horas con singular/plural
+ * @param {number} n
+ * @returns {string}
+ */
+function formatHoras(n) {
+    return n === 1 ? '1 hora' : `${n} horas`;
+}
+
+/**
+ * Extrae el número de un string tipo "10 horas" → 10
+ * @param {string} val
+ * @returns {string}
+ */
+function parseHoras(val) {
+    if (!val) return '';
+    const n = parseInt(val);
+    return isNaN(n) ? '' : String(n);
+}
+
+/**
  * @param {HTMLElement} container  — el #modules-panel del form
  * @param {Object}      course     — curso actual (con .modulos)
  * @param {Function}    onUpdate   — callback tras guardar/eliminar
  */
 export function renderModules(container, course, onUpdate) {
     // Siempre lee modulos frescos del store
-    const fresh = getData('lmsCourses').find(c => c.id === course.id) || course;
+    const fresh   = getData('lmsCourses').find(c => c.id === course.id) || course;
     const modulos = fresh.modulos || [];
 
     container.innerHTML = buildPanelHTML(modulos);
 
     // ── Abrir modal para nuevo módulo ─────────────────────────────────────
     container.querySelector('#btn-add-module')?.addEventListener('click', () => {
-        resetModuleForm(container);
+        resetModuleForm();
         document.querySelector('#module-modal-title').textContent = 'Nuevo Módulo';
         openModal('module-modal');
     });
@@ -34,6 +54,8 @@ export function renderModules(container, course, onUpdate) {
             document.querySelector('#module-codigo').value       = mod.codigo;
             document.querySelector('#module-nombre').value       = mod.nombre;
             document.querySelector('#module-descripcion').value  = mod.descripcion || '';
+            // ✅ Cargar horas al editar
+            document.querySelector('#module-horas').value        = parseHoras(mod.horas || '');
             document.querySelector('#module-modal-title').textContent = 'Editar Módulo';
             openModal('module-modal');
         });
@@ -43,7 +65,7 @@ export function renderModules(container, course, onUpdate) {
     container.querySelectorAll('.btn-delete-module').forEach(btn => {
         btn.addEventListener('click', e => {
             if (!confirm('¿Eliminar este módulo y todas sus lecciones?')) return;
-            const idx = Number(e.currentTarget.dataset.index);
+            const idx     = Number(e.currentTarget.dataset.index);
             const updated = getData('lmsCourses').find(c => c.id === course.id);
             updated.modulos.splice(idx, 1);
             updateItem('lmsCourses', course.id, updated);
@@ -73,19 +95,41 @@ function setupModuleSave(course, onUpdate) {
     btnSave.replaceWith(fresh);
 
     fresh.addEventListener('click', () => {
-        const form = document.querySelector('#module-form');
-        if (!form.checkValidity()) { form.reportValidity(); return; }
+        // Limpiar errores previos
+        clearModuleErrors();
 
-        const idxVal   = document.querySelector('#module-index').value;
-        const isEdit   = idxVal !== '';
-        const idx      = Number(idxVal);
-        const updated  = getData('lmsCourses').find(c => c.id === course.id);
+        const codigo      = document.querySelector('#module-codigo').value.trim();
+        const nombre      = document.querySelector('#module-nombre').value.trim();
+        const descripcion = document.querySelector('#module-descripcion').value.trim();
+        const horasVal    = document.querySelector('#module-horas').value;
+        const horasNum    = parseInt(horasVal);
+
+        let ok = true;
+
+        if (!codigo) {
+            showModuleError('codigo', 'El código es obligatorio.'); ok = false;
+        }
+        if (!nombre) {
+            showModuleError('nombre', 'El nombre es obligatorio.'); ok = false;
+        }
+        if (horasVal && (isNaN(horasNum) || horasNum <= 0)) {
+            showModuleError('horas', 'Ingresá un número entero positivo (ej: 10).'); ok = false;
+        }
+
+        if (!ok) return;
+
+        const idxVal  = document.querySelector('#module-index').value;
+        const isEdit  = idxVal !== '';
+        const idx     = Number(idxVal);
+        const updated = getData('lmsCourses').find(c => c.id === course.id);
 
         const modData = {
             id:          isEdit ? updated.modulos[idx].id : Date.now().toString(),
-            codigo:      document.querySelector('#module-codigo').value.trim(),
-            nombre:      document.querySelector('#module-nombre').value.trim(),
-            descripcion: document.querySelector('#module-descripcion').value.trim(),
+            codigo,
+            nombre,
+            descripcion,
+            // ✅ Guardar horas con formato "N horas", o cadena vacía si no se ingresó
+            horas:       horasVal ? formatHoras(horasNum) : '',
             lecciones:   isEdit ? updated.modulos[idx].lecciones : [],
         };
 
@@ -103,9 +147,26 @@ function setupModuleSave(course, onUpdate) {
     });
 }
 
-function resetModuleForm(container) {
+function clearModuleErrors() {
+    ['codigo', 'nombre', 'horas'].forEach(f => {
+        const el    = document.querySelector(`#err-module-${f}`);
+        const input = document.querySelector(`#module-${f}`);
+        if (el)    { el.textContent = ''; el.classList.add('hidden'); }
+        if (input) { input.classList.remove('is-invalid'); }
+    });
+}
+
+function showModuleError(field, msg) {
+    const el    = document.querySelector(`#err-module-${field}`);
+    const input = document.querySelector(`#module-${field}`);
+    if (el)    { el.textContent = msg; el.classList.remove('hidden'); }
+    if (input) { input.classList.add('is-invalid'); }
+}
+
+function resetModuleForm() {
     document.querySelector('#module-form')?.reset();
     document.querySelector('#module-index').value = '';
+    clearModuleErrors();
 }
 
 // ── HTML del panel de módulos ──────────────────────────────────────────────
@@ -133,17 +194,34 @@ function buildPanelHTML(modulos) {
                 <div class="modal-body">
                     <form id="module-form" novalidate>
                         <input type="hidden" id="module-index">
-                        <div class="form-group">
-                            <label class="form-label">Código *</label>
-                            <input type="text" id="module-codigo" class="form-control" required>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="form-group">
+                                <label class="form-label">Código *</label>
+                                <input type="text" id="module-codigo" class="form-control"
+                                    placeholder="Ej: MOD-001" required maxlength="20">
+                                <span class="form-error hidden" id="err-module-codigo"></span>
+                            </div>
+                            <!-- ✅ Campo de horas del módulo -->
+                            <div class="form-group">
+                                <label class="form-label">Intensidad (horas)</label>
+                                <input type="number" id="module-horas" class="form-control"
+                                    min="1" step="1" placeholder="Ej: 10">
+                                <span class="form-error hidden" id="err-module-horas"></span>
+                            </div>
                         </div>
+
                         <div class="form-group">
                             <label class="form-label">Nombre *</label>
-                            <input type="text" id="module-nombre" class="form-control" required>
+                            <input type="text" id="module-nombre" class="form-control"
+                                required maxlength="120">
+                            <span class="form-error hidden" id="err-module-nombre"></span>
                         </div>
+
                         <div class="form-group">
                             <label class="form-label">Descripción</label>
-                            <textarea id="module-descripcion" class="form-control" rows="3"></textarea>
+                            <textarea id="module-descripcion" class="form-control" rows="3"
+                                maxlength="500"></textarea>
                         </div>
                     </form>
                 </div>
@@ -161,6 +239,11 @@ function buildModuleCard(mod, mIndex) {
             <div class="flex justify-between items-start mb-2">
                 <div style="font-weight:500;font-size:0.875rem;">
                     ${mod.codigo} — ${mod.nombre}
+                    ${mod.horas
+                        ? `<span style="margin-left:0.5rem;font-size:0.75rem;color:var(--text-muted);
+                                        background:#f3f4f6;padding:0.1rem 0.4rem;
+                                        border-radius:var(--radius-sm);">⏱ ${mod.horas}</span>`
+                        : ''}
                 </div>
                 <div class="flex gap-2">
                     <button class="btn-edit-module" data-index="${mIndex}"

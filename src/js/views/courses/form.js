@@ -50,11 +50,15 @@ export function renderCourseForm(container, course, teachers, { onBack, onSaved 
     }
 
     function handleSave() {
-        const duracionRaw = parseInt(container.querySelector('#course-duracion').value);
+        const duracionRaw  = parseInt(container.querySelector('#course-duracion').value);
         const etiquetasRaw = container.querySelector('#course-etiquetas').value.trim();
         const etiquetasLimpias = etiquetasRaw
             ? etiquetasRaw.split(',').map(t => t.trim()).filter(Boolean).join(', ')
             : '';
+
+        // ✅ Leer fecha del campo de fecha editable
+        const fechaInput = container.querySelector('#course-fecha').value;
+        const fecha = fechaInput || new Date().toISOString().split('T')[0];
 
         const existing = course ? getData('lmsCourses').find(c => c.id === course.id) : null;
 
@@ -69,7 +73,7 @@ export function renderCourseForm(container, course, teachers, { onBack, onSaved 
             estado:      container.querySelector('#course-estado').value,
             visibilidad: container.querySelector('#course-visibilidad').value,
             etiquetas:   etiquetasLimpias,
-            fecha:       course ? course.fecha : new Date().toISOString().split('T')[0],
+            fecha,
             modulos:     existing?.modulos ?? (course?.modulos ?? []),
         };
 
@@ -171,6 +175,9 @@ function buildHTML(course, teachers) {
 
     const duracionNum = parseHoras(v('duracion'));
 
+    // ✅ Fecha: si existe en el curso la cargamos; si no, hoy por defecto
+    const fechaValor = v('fecha') || new Date().toISOString().split('T')[0];
+
     return `
         <div class="page-header">
             <div class="flex items-center gap-4">
@@ -246,7 +253,7 @@ function buildHTML(course, teachers) {
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-4" style="grid-template-columns: 1fr 1fr;">
+                        <div class="grid grid-cols-2 gap-4">
                             <div class="form-group">
                                 <label class="form-label">Tipo de Curso *</label>
                                 <select id="course-tipo" class="form-control" required>
@@ -283,10 +290,19 @@ function buildHTML(course, teachers) {
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Etiquetas (separadas por coma)</label>
-                            <input type="text" id="course-etiquetas" class="form-control"
-                                placeholder="js, web, basico" value="${v('etiquetas')}">
+                        <!-- ✅ Fecha de inicio y Etiquetas -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="form-group">
+                                <label class="form-label">Fecha de Inicio</label>
+                                <input type="date" id="course-fecha" class="form-control"
+                                    value="${fechaValor}">
+                                <span class="form-error hidden" id="err-fecha"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Etiquetas (separadas por coma)</label>
+                                <input type="text" id="course-etiquetas" class="form-control"
+                                    placeholder="js, web, basico" value="${v('etiquetas')}">
+                            </div>
                         </div>
 
                     </form>
