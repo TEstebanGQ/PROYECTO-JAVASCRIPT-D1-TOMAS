@@ -1,99 +1,42 @@
 /* ============================================
    RESPONSIVE — Mobile First
-   Breakpoints:
-     xs  < 480px
-     sm  < 768px
-     md  768px – 1023px
-     lg  ≥ 1024px  (desktop base, sin media query)
-     xl  ≥ 1280px
+   xs < 480px | sm < 768px | md 768–1023px | xl ≥ 1280px
    ============================================ */
 
 
-/* ============================================
-   ESTADO BASE (fuera de media queries)
-   ============================================ */
-
-/* Logout: por defecto desktop visible, móvil oculto */
-.btn-logout-mobile  { display: none; }
-.btn-logout-desktop { display: inline-flex; }
-
-/* Hamburguesa oculta en desktop */
+/* ── Estado base (desktop) ── */
 .btn-hamburger { display: none; }
 
 
-/* ============================================
-   MD HELPERS — tablet y desktop (≥ 768px)
-   Clases utilitarias de grid responsivo
-   ============================================ */
+/* ── MD helpers ≥ 768px ── */
 @media (min-width: 768px) {
     .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     .md\:col-span-2  { grid-column: span 2 / span 2; }
-
-    /* Vista pública: detalle del curso en 2 columnas */
-    .public-course-detail-grid {
-        grid-template-columns: 1fr 1fr;
-    }
+    .public-course-detail-grid { grid-template-columns: 1fr 1fr; }
 }
 
-
-/* ============================================
-   TABLET — 768px a 1023px
-   ============================================ */
+/* ── Tablet 768px – 1023px ── */
 @media (min-width: 768px) and (max-width: 1023px) {
-
-    .page-content {
-        padding: 1.5rem;
-    }
-
-    .page-title {
-        font-size: 1.375rem;
-    }
-
-    /* Hero público más compacto */
-    .public-hero {
-        padding: 4rem 0;
-    }
-    .public-hero h1 {
-        font-size: 2.25rem;
-    }
-
-    /* Grid de 3 columnas → 2 en tablet */
-    .grid-cols-3 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+    .page-content  { padding: 1.5rem; }
+    .page-title    { font-size: 1.375rem; }
+    .public-hero   { padding: 4rem 0; }
+    .public-hero h1 { font-size: 2.25rem; }
+    .grid-cols-3   { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-
-/* ============================================
-   TABLET + MÓVIL — hasta 1023px
-   Sidebar fuera del flujo, hamburguesa visible
-   ============================================ */
+/* ── Tablet + Móvil ≤ 1023px ── */
 @media (max-width: 1023px) {
+    /* Sidebar */
+    .sidebar       { transform: translateX(calc(-1 * var(--sidebar-width))); box-shadow: none; }
+    .sidebar.open  { transform: translateX(0); box-shadow: var(--shadow-lg); }
+    .main-content  { margin-left: 0; }
 
-    /* ---------- SIDEBAR ---------- */
-    .sidebar {
-        transform: translateX(calc(-1 * var(--sidebar-width)));
-        box-shadow: none;
-    }
+    /* Topbar */
+    .topbar        { padding: 0 1rem; }
 
-    .sidebar.open {
-        transform: translateX(0);
-        box-shadow: var(--shadow-lg);
-    }
-
-    /* ---------- MAIN ---------- */
-    .main-content {
-        margin-left: 0;
-    }
-
-    /* ---------- TOPBAR ---------- */
-    .topbar {
-        padding: 0 1rem;
-    }
-
-    /* Hamburguesa visible */
+    /* Hamburguesa */
     .btn-hamburger {
         display: flex;
         align-items: center;
@@ -107,223 +50,81 @@
         flex-shrink: 0;
         transition: var(--transition);
     }
-    .btn-hamburger:hover {
-        background-color: var(--bg-body);
-    }
+    .btn-hamburger:hover { background-color: var(--bg-body); }
 
-    /* ---------- PAGE ---------- */
-    .page-content {
-        padding: 1.25rem 1rem;
-    }
-
-    .page-header {
-        margin-bottom: 1.25rem;
-    }
-
-    .page-title {
-        font-size: 1.25rem;
-    }
-
-    /* ---------- LOGOUT ---------- */
-    /* Ícono en topbar visible, botón de texto oculto */
-    .btn-logout-mobile {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        border-radius: var(--radius-md);
-        border: 1px solid var(--border-color);
-        background: transparent;
-        cursor: pointer;
-        color: var(--danger);
-        flex-shrink: 0;
-        transition: var(--transition);
-    }
-    .btn-logout-mobile:hover {
-        background-color: #fee2e2;
-        border-color: var(--danger);
-    }
-
-    .btn-logout-desktop {
-        display: none;
-    }
+    /* Page */
+    .page-content  { padding: 1.25rem 1rem; }
+    .page-header   { margin-bottom: 1.25rem; }
+    .page-title    { font-size: 1.25rem; }
 }
 
 
-/* ============================================
-   MÓVIL — hasta 767px
-   ============================================ */
+/* ── Móvil ≤ 767px ── */
 @media (max-width: 767px) {
-
-    /* ---------- GRIDS → 1 COLUMNA ---------- */
+    /* Grids → 1 columna */
     .grid-cols-2,
     .grid-cols-3,
-    .grid-cols-4 {
-        grid-template-columns: 1fr;
-    }
+    .grid-cols-4 { grid-template-columns: 1fr; }
 
-    /* ---------- PAGE HEADER ---------- */
-    .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.75rem;
-    }
+    /* Page */
+    .page-header { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
 
-    /* ---------- CARDS ---------- */
-    .card {
-        padding: 1rem;
-    }
+    /* Cards */
+    .card { padding: 1rem; }
 
-    /* ---------- TABLA ---------- */
-    .table-container {
-        border-radius: var(--radius-md);
-    }
+    /* Tabla */
+    .table-container          { border-radius: var(--radius-md); }
+    .table th, .table td      { padding: 0.625rem 0.75rem; }
+    .table .col-hide-mobile   { display: none; }
+    .table td:last-child      { white-space: nowrap; }
 
-    .table th,
-    .table td {
-        padding: 0.625rem 0.75rem;
-    }
+    /* Modal bottom-sheet */
+    .modal-overlay            { align-items: flex-end; padding: 0; }
+    .modal-content            { max-width: 100%; border-radius: var(--radius-lg) var(--radius-lg) 0 0; max-height: 92vh; transform: translateY(100%); }
+    .modal-overlay.active .modal-content { transform: translateY(0); }
 
-    /* Ocultar columnas secundarias en tablas */
-    .table .col-hide-mobile {
-        display: none;
-    }
+    /* Botones */
+    .btn-sm { padding: 0.2rem 0.4rem; font-size: 0.7rem; }
 
-    /* Evitar salto de línea en acciones */
-    .table td:last-child {
-        white-space: nowrap;
-    }
+    /* Login */
+    .login-card { padding: 2rem 1.25rem; border-radius: var(--radius-lg); }
 
-    /* ---------- MODAL (bottom sheet) ---------- */
-    .modal-overlay {
-        align-items: flex-end;
-        padding: 0;
-    }
+    /* Toast */
+    .toast { right: 1rem; left: 1rem; bottom: 1rem; text-align: center; }
 
-    .modal-content {
-        max-width: 100%;
-        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-        max-height: 92vh;
-        transform: translateY(100%);
-    }
+    /* Dashboard */
+    .stat-card  { gap: 0.75rem; }
+    .stat-value { font-size: 1.375rem; }
 
-    .modal-overlay.active .modal-content {
-        transform: translateY(0);
-    }
+    /* Vista pública */
+    .public-hero      { padding: 3rem 0; }
+    .public-hero h1   { font-size: 1.75rem; }
+    .public-hero p    { font-size: 1rem; }
+    .public-nav .btn  { font-size: 0.8rem; padding: 0.4rem 0.75rem; }
 
-    /* ---------- BOTONES ---------- */
-    .btn-sm {
-        padding: 0.2rem 0.4rem;
-        font-size: 0.7rem;
-    }
+    /* Topbar: ocultar texto "Ver Sitio", mostrar emoji */
+    .topbar .btn-outline span   { display: none; }
+    .topbar .btn-outline::after { content: "🌐"; font-size: 1rem; }
 
-    /* ---------- LOGIN ---------- */
-    .login-card {
-        padding: 2rem 1.25rem;
-        border-radius: var(--radius-lg);
-    }
-
-    /* ---------- TOAST ---------- */
-    .toast {
-        right: 1rem;
-        left: 1rem;
-        bottom: 1rem;
-        text-align: center;
-    }
-
-    /* ---------- DASHBOARD ---------- */
-    .stat-card {
-        gap: 0.75rem;
-    }
-
-    .stat-value {
-        font-size: 1.375rem;
-    }
-
-    /* ---------- VISTA PÚBLICA ---------- */
-    .public-hero {
-        padding: 3rem 0;
-    }
-
-    .public-hero h1 {
-        font-size: 1.75rem;
-    }
-
-    .public-hero p {
-        font-size: 1rem;
-    }
-
-    .public-nav .btn {
-        font-size: 0.8rem;
-        padding: 0.4rem 0.75rem;
-    }
-
-    /* ---------- TOPBAR: ocultar texto "Ver Sitio", mostrar emoji ---------- */
-    .topbar .btn-outline span {
-        display: none;
-    }
-
-    .topbar .btn-outline::after {
-        content: "🌐";
-        font-size: 1rem;
-    }
-
-    /* ---------- CURSOS: módulos panel full width ---------- */
-    #modules-panel {
-        margin-top: 1rem;
-    }
+    /* Cursos */
+    #modules-panel { margin-top: 1rem; }
 }
 
 
-/* ============================================
-   MÓVIL PEQUEÑO — hasta 479px
-   ============================================ */
+/* ── Móvil pequeño ≤ 479px ── */
 @media (max-width: 479px) {
-
-    /* Sidebar más angosto */
-    :root {
-        --sidebar-width: 220px;
-    }
-
-    .public-hero h1 {
-        font-size: 1.5rem;
-    }
-
-    .login-card {
-        padding: 1.5rem 1rem;
-    }
-
-    .page-content {
-        padding: 1rem 0.75rem;
-    }
-
-    .topbar {
-        padding: 0 0.75rem;
-    }
-
-    /* Botones de acción al 100% en pantallas muy pequeñas */
-    .page-header .btn {
-        width: 100%;
-        justify-content: center;
-    }
+    :root              { --sidebar-width: 220px; }
+    .public-hero h1    { font-size: 1.5rem; }
+    .login-card        { padding: 1.5rem 1rem; }
+    .page-content      { padding: 1rem 0.75rem; }
+    .topbar            { padding: 0 0.75rem; }
+    .page-header .btn  { width: 100%; justify-content: center; }
 }
 
 
-/* ============================================
-   WIDE SCREEN — 1280px+
-   ============================================ */
+/* ── Wide screen ≥ 1280px ── */
 @media (min-width: 1280px) {
-
-    .container {
-        max-width: 1320px;
-    }
-
-    .page-content {
-        padding: 2.5rem 3rem;
-    }
-
-    .public-hero h1 {
-        font-size: 3.25rem;
-    }
+    .container      { max-width: 1320px; }
+    .page-content   { padding: 2.5rem 3rem; }
+    .public-hero h1 { font-size: 3.25rem; }
 }

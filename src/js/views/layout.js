@@ -19,7 +19,6 @@ export function renderLayout(renderContent) {
     const isActive = (route) => currentHash === `#${route}` ? 'active' : '';
 
     const layoutHTML = `
-        <!-- Overlay para cerrar sidebar en móvil -->
         <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
         <div class="app-layout">
@@ -28,6 +27,7 @@ export function renderLayout(renderContent) {
                     <img src="/img/icons/icon1.png" alt="Logo" style="width: 32px; height: 32px;">
                     <div class="sidebar-title">LMS Admin</div>
                 </div>
+
                 <nav class="sidebar-nav">
                     <a href="/dashboard" class="nav-item ${isActive('/dashboard')}" data-link>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
@@ -45,30 +45,36 @@ export function renderLayout(renderContent) {
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
                         Administrativos
                     </a>
-
-                    <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: auto; padding-top: 0.5rem;">
-                        <button id="logout-btn-nav" class="nav-item" style="width:100%; text-align:left; color: #f87171;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
-                            Cerrar Sesión
-                        </button>
-                    </div>
                 </nav>
 
+                <!-- Footer: avatar + nombre + logout -->
                 <div class="sidebar-footer">
-                    <div class="flex items-center gap-2">
-                        <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary);
-                                    color: white; display: flex; align-items: center; justify-content: center;
-                                    font-weight: bold; flex-shrink: 0;">
+                    <div class="flex items-center gap-2" style="margin-bottom: 0.75rem;">
+                        <div style="width:32px;height:32px;border-radius:50%;background:var(--primary);
+                                    color:white;display:flex;align-items:center;justify-content:center;
+                                    font-weight:bold;flex-shrink:0;">
                             ${userInitial}
                         </div>
-                        <div style="min-width: 0;">
-                            <div style="font-size: 0.875rem; font-weight: 500; color: white;
-                                        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        <div style="min-width:0;">
+                            <div style="font-size:0.875rem;font-weight:500;color:white;
+                                        white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
                                 ${userName}
                             </div>
-                            <div style="font-size: 0.75rem; color: var(--sidebar-text);">${userCargo}</div>
+                            <div style="font-size:0.75rem;color:var(--sidebar-text);">${userCargo}</div>
                         </div>
                     </div>
+
+                    <button id="logout-btn" class="nav-item"
+                        style="width:100%;border-radius:var(--radius-md);color:#f87171;padding:0.6rem 0.75rem;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" x2="9" y1="12" y2="12"/>
+                        </svg>
+                        Cerrar Sesión
+                    </button>
                 </div>
             </aside>
 
@@ -90,29 +96,9 @@ export function renderLayout(renderContent) {
                         <a href="/" class="btn btn-outline" data-link>
                             <span>Ver Sitio Público</span>
                         </a>
-                        <button id="logout-btn-topbar" class="btn-logout-mobile" aria-label="Cerrar sesión"
-                            title="Cerrar sesión">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                                <polyline points="16 17 21 12 16 7"/>
-                                <line x1="21" x2="9" y1="12" y2="12"/>
-                            </svg>
-                        </button>
-                        <!-- Botón logout desktop (en sidebar footer) -->
-                        <button id="logout-btn" class="btn btn-outline btn-logout-desktop">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
-                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                                <polyline points="16 17 21 12 16 7"/>
-                                <line x1="21" x2="9" y1="12" y2="12"/>
-                            </svg>
-                            Salir
-                        </button>
                     </div>
                 </header>
+
                 <div class="page-content" id="page-content"></div>
             </main>
         </div>
@@ -120,39 +106,24 @@ export function renderLayout(renderContent) {
 
     app.innerHTML = layoutHTML;
 
-    const doLogout = () => { logout(); navigateTo('/login'); };
-
-    document.getElementById('logout-btn')?.addEventListener('click', doLogout);
-    document.getElementById('logout-btn-topbar')?.addEventListener('click', doLogout);
-    document.getElementById('logout-btn-nav')?.addEventListener('click', doLogout);
+    document.getElementById('logout-btn').addEventListener('click', () => {
+        logout();
+        navigateTo('/login');
+    });
 
     const sidebar        = document.getElementById('sidebar');
     const btnHamburger   = document.getElementById('btn-hamburger');
     const sidebarOverlay = document.getElementById('sidebar-overlay');
 
-    function openSidebar() {
-        sidebar.classList.add('open');
-        sidebarOverlay.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
+    const openSidebar  = () => { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; };
+    const closeSidebar = () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); document.body.style.overflow = ''; };
 
-    function closeSidebar() {
-        sidebar.classList.remove('open');
-        sidebarOverlay.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-
-    btnHamburger.addEventListener('click', () => {
-        sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
-    });
-
+    btnHamburger.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
     sidebarOverlay.addEventListener('click', closeSidebar);
 
-    sidebar.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', () => {
-            if (sidebarOverlay.classList.contains('active')) closeSidebar();
-        });
-    });
+    sidebar.querySelectorAll('.nav-item').forEach(item =>
+        item.addEventListener('click', () => { if (sidebarOverlay.classList.contains('active')) closeSidebar(); })
+    );
 
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && sidebar.classList.contains('open')) closeSidebar();
