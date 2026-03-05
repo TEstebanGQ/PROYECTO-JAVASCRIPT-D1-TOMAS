@@ -26,19 +26,19 @@ export function renderLayout(renderContent) {
                     <div class="sidebar-title">LMS Admin</div>
                 </div>
                 <nav class="sidebar-nav">
-                    <a href="/dashboard" class="nav-item ${window.location.pathname === '/dashboard' ? 'active' : ''}" data-link>
+                    <a href="/dashboard" class="nav-item ${window.location.pathname === '#/dashboard' ? 'active' : ''}" data-link>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
                         Dashboard
                     </a>
-                    <a href="/courses" class="nav-item ${window.location.pathname === '/courses' ? 'active' : ''}" data-link>
+                    <a href="/courses" class="nav-item ${window.location.pathname === '#/courses' ? 'active' : ''}" data-link>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
                         Cursos
                     </a>
-                    <a href="/teachers" class="nav-item ${window.location.pathname === '/teachers' ? 'active' : ''}" data-link>
+                    <a href="/teachers" class="nav-item ${window.location.pathname === '#/teachers' ? 'active' : ''}" data-link>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                         Docentes
                     </a>
-                    <a href="/admins" class="nav-item ${window.location.pathname === '/admins' ? 'active' : ''}" data-link>
+                    <a href="/admins" class="nav-item ${window.location.pathname === '#/admins' ? 'active' : ''}" data-link>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
                         Administrativos
                     </a>

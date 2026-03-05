@@ -17,35 +17,37 @@ const routes = {
 };
 
 export function initRouter() {
-    // Interceptar clicks en enlaces
     document.body.addEventListener('click', e => {
-        if (e.target.matches('[data-link]')) {
+        const link = e.target.matches('[data-link]')
+            ? e.target
+            : e.target.closest('[data-link]');
+        if (link) {
             e.preventDefault();
-            navigateTo(e.target.getAttribute('href'));
-        } else if (e.target.closest('[data-link]')) {
-            e.preventDefault();
-            navigateTo(e.target.closest('[data-link]').getAttribute('href'));
+            navigateTo(link.getAttribute('href'));
         }
     });
 
-    // Manejar botones de navegación del navegador
-    window.addEventListener('popstate', router);
-
-    // Carga inicial
+    window.addEventListener('hashchange', router);
     router();
 }
 
-export function navigateTo(url) {
-    history.pushState(null, null, url);
-    router();
+export function navigateTo(path) {
+    if (path && !path.startsWith('#')) {
+        path = '#' + path;
+    }
+    window.location.hash = path;
+}
+
+function getPath() {
+    const hash = window.location.hash;
+    if (!hash || hash === '#' || hash === '#/') return '/';
+    return hash.replace('#', '') || '/';
 }
 
 function router() {
-    let path = window.location.pathname;
-    
-    // Rutas protegidas
+    const path = getPath();
     const protectedRoutes = ['/dashboard', '/courses', '/teachers', '/admins'];
-    
+
     if (protectedRoutes.includes(path) && !isAuthenticated()) {
         navigateTo('/login');
         return;
@@ -57,9 +59,7 @@ function router() {
     }
 
     const view = routes[path] || routes['/'];
-    
     const appElement = document.getElementById('app');
-    appElement.innerHTML = ''; // Limpiar
-    
+    appElement.innerHTML = '';
     view(appElement);
 }
