@@ -1,57 +1,42 @@
-/* ---- md: grid helpers (tablet+) ---- */
+/* ============================================
+   RESPONSIVE — Mobile First
+   Breakpoints:
+     xs  < 480px
+     sm  < 768px
+     md  768px – 1023px
+     lg  ≥ 1024px  (desktop base, sin media query)
+     xl  ≥ 1280px
+   ============================================ */
+
+
+/* ============================================
+   ESTADO BASE (fuera de media queries)
+   ============================================ */
+
+/* Logout: por defecto desktop visible, móvil oculto */
+.btn-logout-mobile  { display: none; }
+.btn-logout-desktop { display: inline-flex; }
+
+/* Hamburguesa oculta en desktop */
+.btn-hamburger { display: none; }
+
+
+/* ============================================
+   MD HELPERS — tablet y desktop (≥ 768px)
+   Clases utilitarias de grid responsivo
+   ============================================ */
 @media (min-width: 768px) {
     .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     .md\:col-span-2  { grid-column: span 2 / span 2; }
 
+    /* Vista pública: detalle del curso en 2 columnas */
     .public-course-detail-grid {
         grid-template-columns: 1fr 1fr;
     }
 }
 
-@media (max-width: 1023px) {
-
-    /* Sidebar se sale del flujo */
-    .sidebar {
-        transform: translateX(calc(-1 * var(--sidebar-width)));
-        box-shadow: none;
-    }
-
-    .sidebar.open {
-        transform: translateX(0);
-        box-shadow: var(--shadow-lg);
-    }
-
-    /* Main ocupa todo el ancho */
-    .main-content {
-        margin-left: 0;
-    }
-
-    /* Aparece el botón hamburguesa */
-    .btn-hamburger {
-        display: flex;
-    }
-
-    /* Topbar más compacta */
-    .topbar {
-        padding: 0 1rem;
-    }
-
-    /* Page content con menos padding */
-    .page-content {
-        padding: 1.25rem 1rem;
-    }
-
-    /* Page header en columna si hay poco espacio */
-    .page-header {
-        margin-bottom: 1.25rem;
-    }
-
-    .page-title {
-        font-size: 1.25rem;
-    }
-}
 
 /* ============================================
    TABLET — 768px a 1023px
@@ -62,51 +47,135 @@
         padding: 1.5rem;
     }
 
+    .page-title {
+        font-size: 1.375rem;
+    }
+
+    /* Hero público más compacto */
+    .public-hero {
+        padding: 4rem 0;
+    }
     .public-hero h1 {
         font-size: 2.25rem;
     }
 
-    /* FIX #7: grid de 3 col en tablet → 2 col */
+    /* Grid de 3 columnas → 2 en tablet */
     .grid-cols-3 {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
+
+
+/* ============================================
+   TABLET + MÓVIL — hasta 1023px
+   Sidebar fuera del flujo, hamburguesa visible
+   ============================================ */
+@media (max-width: 1023px) {
+
+    /* ---------- SIDEBAR ---------- */
+    .sidebar {
+        transform: translateX(calc(-1 * var(--sidebar-width)));
+        box-shadow: none;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+        box-shadow: var(--shadow-lg);
+    }
+
+    /* ---------- MAIN ---------- */
+    .main-content {
+        margin-left: 0;
+    }
+
+    /* ---------- TOPBAR ---------- */
+    .topbar {
+        padding: 0 1rem;
+    }
+
+    /* Hamburguesa visible */
+    .btn-hamburger {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-color);
+        background: transparent;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: var(--transition);
+    }
+    .btn-hamburger:hover {
+        background-color: var(--bg-body);
+    }
+
+    /* ---------- PAGE ---------- */
+    .page-content {
+        padding: 1.25rem 1rem;
+    }
+
+    .page-header {
+        margin-bottom: 1.25rem;
+    }
+
+    .page-title {
+        font-size: 1.25rem;
+    }
+
+    /* ---------- LOGOUT ---------- */
+    /* Ícono en topbar visible, botón de texto oculto */
+    .btn-logout-mobile {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-color);
+        background: transparent;
+        cursor: pointer;
+        color: var(--danger);
+        flex-shrink: 0;
+        transition: var(--transition);
+    }
+    .btn-logout-mobile:hover {
+        background-color: #fee2e2;
+        border-color: var(--danger);
+    }
+
+    .btn-logout-desktop {
+        display: none;
+    }
+}
+
 
 /* ============================================
    MÓVIL — hasta 767px
    ============================================ */
 @media (max-width: 767px) {
 
-    /* Hero público */
-    .public-hero {
-        padding: 3rem 0;
-    }
-
-    .public-hero h1 {
-        font-size: 1.75rem;
-    }
-
-    .public-hero p {
-        font-size: 1rem;
-    }
-
-    /* FIX #1 + #3: Todos los grids a 1 columna en móvil,
-       sin importar si tienen o no la clase .gap-4 */
+    /* ---------- GRIDS → 1 COLUMNA ---------- */
     .grid-cols-2,
     .grid-cols-3,
-    .grid-cols-4,
-    .grid.grid-cols-2,
-    .grid.grid-cols-3,
-    .grid.grid-cols-4 {
+    .grid-cols-4 {
         grid-template-columns: 1fr;
     }
 
-    /* Cards con menos padding */
+    /* ---------- PAGE HEADER ---------- */
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    /* ---------- CARDS ---------- */
     .card {
         padding: 1rem;
     }
 
-    /* Tabla con scroll horizontal */
+    /* ---------- TABLA ---------- */
     .table-container {
         border-radius: var(--radius-md);
     }
@@ -121,7 +190,12 @@
         display: none;
     }
 
-    /* Modal ocupa casi toda la pantalla */
+    /* Evitar salto de línea en acciones */
+    .table td:last-child {
+        white-space: nowrap;
+    }
+
+    /* ---------- MODAL (bottom sheet) ---------- */
     .modal-overlay {
         align-items: flex-end;
         padding: 0;
@@ -138,13 +212,19 @@
         transform: translateY(0);
     }
 
-    /* Login */
+    /* ---------- BOTONES ---------- */
+    .btn-sm {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.7rem;
+    }
+
+    /* ---------- LOGIN ---------- */
     .login-card {
         padding: 2rem 1.25rem;
         border-radius: var(--radius-lg);
     }
 
-    /* Toast abajo al centro en móvil */
+    /* ---------- TOAST ---------- */
     .toast {
         right: 1rem;
         left: 1rem;
@@ -152,13 +232,7 @@
         text-align: center;
     }
 
-    /* Botones de acciones en tabla más pequeños */
-    .btn-sm {
-        padding: 0.2rem 0.4rem;
-        font-size: 0.7rem;
-    }
-
-    /* Dashboard: stat cards apilados */
+    /* ---------- DASHBOARD ---------- */
     .stat-card {
         gap: 0.75rem;
     }
@@ -167,55 +241,51 @@
         font-size: 1.375rem;
     }
 
-    /* Page header en col en móvil */
-    .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.75rem;
+    /* ---------- VISTA PÚBLICA ---------- */
+    .public-hero {
+        padding: 3rem 0;
     }
 
-    /* Filtros de cursos: apilados */
-    .filter-bar .grid {
-        grid-template-columns: 1fr;
+    .public-hero h1 {
+        font-size: 1.75rem;
     }
 
-    /* Public nav */
+    .public-hero p {
+        font-size: 1rem;
+    }
+
     .public-nav .btn {
         font-size: 0.8rem;
         padding: 0.4rem 0.75rem;
     }
 
-    /* FIX #6: Topbar botón "Ver sitio" — muestra ícono, oculta texto */
+    /* ---------- TOPBAR: ocultar texto "Ver Sitio", mostrar emoji ---------- */
     .topbar .btn-outline span {
         display: none;
     }
 
-    /* FIX: Asegurar que el botón topbar no quede vacío visualmente */
     .topbar .btn-outline::after {
         content: "🌐";
         font-size: 1rem;
     }
 
-    /* FIX #7: Formulario de cursos — grid de 3 col a 1 col */
-    .grid-cols-3 {
-        grid-template-columns: 1fr;
-    }
-
-    /* Módulo panel — full width en móvil */
+    /* ---------- CURSOS: módulos panel full width ---------- */
     #modules-panel {
         margin-top: 1rem;
     }
-
-    /* Acciones de tabla en docentes y admins */
-    .table td:last-child {
-        white-space: nowrap;
-    }
 }
+
 
 /* ============================================
    MÓVIL PEQUEÑO — hasta 479px
    ============================================ */
 @media (max-width: 479px) {
+
+    /* Sidebar más angosto */
+    :root {
+        --sidebar-width: 220px;
+    }
+
     .public-hero h1 {
         font-size: 1.5rem;
     }
@@ -232,22 +302,19 @@
         padding: 0 0.75rem;
     }
 
-    /* Botones de acción apilados en pantallas muy pequeñas */
+    /* Botones de acción al 100% en pantallas muy pequeñas */
     .page-header .btn {
         width: 100%;
         justify-content: center;
     }
-
-    /* Sidebar más angosto si la pantalla es muy pequeña */
-    :root {
-        --sidebar-width: 220px;
-    }
 }
+
 
 /* ============================================
    WIDE SCREEN — 1280px+
    ============================================ */
 @media (min-width: 1280px) {
+
     .container {
         max-width: 1320px;
     }
@@ -258,39 +325,5 @@
 
     .public-hero h1 {
         font-size: 3.25rem;
-    }
-}
-
-.btn-logout-mobile {
-    display: none;
-}
-
-.btn-logout-desktop {
-    display: inline-flex;
-}
-
-@media (max-width: 1023px) {
-    .btn-logout-mobile {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        border-radius: var(--radius-md);
-        border: 1px solid var(--border-color);
-        background: transparent;
-        cursor: pointer;
-        color: var(--danger);
-        flex-shrink: 0;
-        transition: var(--transition);
-    }
-
-    .btn-logout-mobile:hover {
-        background-color: #fee2e2;
-        border-color: var(--danger);
-    }
-
-    .btn-logout-desktop {
-        display: none;
     }
 }
