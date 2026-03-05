@@ -6,14 +6,34 @@ import { openModal, closeModal, setupModalClose } from '../../utils/modal.js';
 import { showToast } from '../../utils/toast.js';
 
 /**
+ * Formatea un número de horas con singular/plural
+ * @param {number} n
+ * @returns {string}
+ */
+function formatHoras(n) {
+    return n === 1 ? '1 hora' : `${n} horas`;
+}
+
+/**
+ * Extrae el número de un string tipo "2 horas" → 2
+ * @param {string} val
+ * @returns {number}
+ */
+function parseHoras(val) {
+    if (!val) return 1;
+    const n = parseInt(val);
+    return isNaN(n) || n < 1 ? 1 : n;
+}
+
+/**
  * @param {HTMLElement} container  — .lessons-container del módulo
  * @param {Object}      course     — curso actual
  * @param {number}      mIdx       — índice del módulo
  * @param {Function}    onUpdate   — callback tras guardar/eliminar
  */
 export function renderLessons(container, course, mIdx, onUpdate) {
-    const fresh   = getData('lmsCourses').find(c => c.id === course.id) || course;
-    const modulo  = fresh.modulos[mIdx];
+    const fresh     = getData('lmsCourses').find(c => c.id === course.id) || course;
+    const modulo    = fresh.modulos[mIdx];
     const lecciones = modulo?.lecciones || [];
 
     container.innerHTML = buildLessonsHTML(lecciones, mIdx);
@@ -33,12 +53,12 @@ export function renderLessons(container, course, mIdx, onUpdate) {
             const lIdx = Number(e.currentTarget.dataset.lindex);
             const lec  = lecciones[lIdx];
 
-            document.querySelector('#lesson-mindex').value    = mIdx;
-            document.querySelector('#lesson-lindex').value    = lIdx;
-            document.querySelector('#lesson-titulo').value    = lec.titulo;
-            document.querySelector('#lesson-intensidad').value = lec.intensidad;
-            document.querySelector('#lesson-contenido').value = lec.contenido;
-            document.querySelector('#lesson-multimedia').value = lec.multimedia || '';
+            document.querySelector('#lesson-mindex').value      = mIdx;
+            document.querySelector('#lesson-lindex').value      = lIdx;
+            document.querySelector('#lesson-titulo').value      = lec.titulo;
+            document.querySelector('#lesson-intensidad').value  = parseHoras(lec.intensidad);
+            document.querySelector('#lesson-contenido').value   = lec.contenido;
+            document.querySelector('#lesson-multimedia').value  = lec.multimedia || '';
 
             document.querySelector('#lesson-modal-title').textContent = 'Editar Lección';
             openModal('lesson-modal');
@@ -58,7 +78,7 @@ export function renderLessons(container, course, mIdx, onUpdate) {
         });
     });
 
-    // ── Modal de lección (solo lo monta la primera vez que no existe) ─────
+    // ── Modal de lección (solo lo monta la primera vez) ───────────────────
     if (!document.querySelector('#lesson-modal')) {
         document.body.insertAdjacentHTML('beforeend', buildLessonModalHTML());
     }
@@ -76,8 +96,35 @@ function setupLessonSave(course, onUpdate) {
     btn.replaceWith(fresh);
 
     fresh.addEventListener('click', () => {
-        const form = document.querySelector('#lesson-form');
-        if (!form.checkValidity()) { form.reportValidity(); return; }
+        clearLessonErrors();
+
+        const titulo      = document.querySelector('#lesson-titulo').value.trim();
+        const intensidadV = document.querySelector('#lesson-intensidad').value;
+        const contenido   = document.querySelector('#lesson-contenido').value.trim();
+        const multimedia  = document.querySelector('#lesson-multimedia').value.trim();
+
+        let ok = true;
+
+        if (!titulo || titulo.length < 3) {
+            showLessonError('titulo', 'El título es obligatorio (mínimo 3 caracteres).'); ok = false;
+        }
+
+        const intensidadNum = parseInt(intensidadV);
+        if (!intensidadV) {
+            showLessonError('intensidad', 'La intensidad horaria es obligatoria.'); ok = false;
+        } else if (isNaN(intensidadNum) || intensidadNum <= 0) {
+            showLessonError('intensidad', 'Ingresá un número entero positivo (ej: 2).'); ok = false;
+        }
+
+        if (!contenido || contenido.length < 5) {
+            showLessonError('contenido', 'El contenido es obligatorio (mínimo 5 caracteres).'); ok = false;
+        }
+
+        if (multimedia && !/^https?:\/\/.+/.test(multimedia)) {
+            showLessonError('multimedia', 'La URL debe comenzar con https://'); ok = false;
+        }
+
+        if (!ok) return;
 
         const mIdx   = Number(document.querySelector('#lesson-mindex').value);
         const lIdxV  = document.querySelector('#lesson-lindex').value;
@@ -90,11 +137,11 @@ function setupLessonSave(course, onUpdate) {
         const lecData = {
             id: isEdit
                 ? updated.modulos[mIdx].lecciones[lIdx].id
-                : Date.now().toString(),
-            titulo:     document.querySelector('#lesson-titulo').value.trim(),
-            intensidad: document.querySelector('#lesson-intensidad').value.trim(),
-            contenido:  document.querySelector('#lesson-contenido').value.trim(),
-            multimedia: document.querySelector('#lesson-multimedia').value.trim(),
+                : (typeof crypto?.randomUUID === 'function' ? crypto.randomUUID() : Date.now().toString()),
+            titulo,
+            intensidad: formatHoras(intensidadNum),
+            contenido,
+            multimedia,
         };
 
         if (isEdit) {
@@ -110,8 +157,25 @@ function setupLessonSave(course, onUpdate) {
     });
 }
 
+function clearLessonErrors() {
+    ['titulo', 'intensidad', 'contenido', 'multimedia'].forEach(f => {
+        const el    = document.querySelector(`#err-lesson-${f}`);
+        const input = document.querySelector(`#lesson-${f}`);
+        if (el)    { el.textContent = ''; el.classList.add('hidden'); }
+        if (input) { input.classList.remove('is-invalid'); }
+    });
+}
+
+function showLessonError(field, msg) {
+    const el    = document.querySelector(`#err-lesson-${field}`);
+    const input = document.querySelector(`#lesson-${field}`);
+    if (el)    { el.textContent = msg; el.classList.remove('hidden'); }
+    if (input) { input.classList.add('is-invalid'); }
+}
+
 function resetLessonForm() {
     document.querySelector('#lesson-form')?.reset();
+    clearLessonErrors();
 }
 
 // ── HTML lista de lecciones ────────────────────────────────────────────────
@@ -145,7 +209,8 @@ function buildLessonItem(lec, mIdx, lIndex) {
                   title="${lec.titulo}">
                 ${lec.titulo}
             </span>
-            <div class="flex gap-2">
+            <div class="flex gap-2" style="align-items:center;">
+                <span style="font-size:0.7rem;color:var(--text-muted);">${lec.intensidad || ''}</span>
                 <button class="btn-edit-lesson"
                     data-mindex="${mIdx}" data-lindex="${lIndex}"
                     style="color:var(--info);" title="Editar lección">✎</button>
@@ -171,22 +236,30 @@ function buildLessonModalHTML() {
                         <input type="hidden" id="lesson-lindex">
                         <div class="form-group">
                             <label class="form-label">Título *</label>
-                            <input type="text" id="lesson-titulo" class="form-control" required>
+                            <input type="text" id="lesson-titulo" class="form-control"
+                                required minlength="3" maxlength="150">
+                            <span class="form-error hidden" id="err-lesson-titulo"></span>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Intensidad Horaria *</label>
-                            <input type="text" id="lesson-intensidad" class="form-control"
-                                placeholder="Ej: 2 horas" required>
+                            <label class="form-label">Intensidad Horaria * (horas)</label>
+                            <input type="number" id="lesson-intensidad" class="form-control"
+                                min="1" step="1" placeholder="Ej: 2" required>
+                            <span class="form-error hidden" id="err-lesson-intensidad"></span>
+                            <small style="color:var(--text-muted);font-size:0.75rem;">
+                                Ingresá solo el número. Se guardará como "1 hora" o "N horas".
+                            </small>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Contenido *</label>
                             <textarea id="lesson-contenido" class="form-control"
-                                rows="4" required></textarea>
+                                rows="4" required minlength="5"></textarea>
+                            <span class="form-error hidden" id="err-lesson-contenido"></span>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Multimedia (URL)</label>
+                            <label class="form-label">Multimedia (URL — video, PDF o imagen)</label>
                             <input type="url" id="lesson-multimedia" class="form-control"
                                 placeholder="https://...">
+                            <span class="form-error hidden" id="err-lesson-multimedia"></span>
                         </div>
                     </form>
                 </div>

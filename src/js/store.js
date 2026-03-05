@@ -49,6 +49,7 @@ const initialCourses = [
         descripcion: 'Aprende los fundamentos de la programación con JavaScript.',
         docenteId: 't-1',
         categorias: 'Tecnología',
+        tipo: 'Virtual',
         duracion: '40 horas',
         etiquetas: 'js, web, basico',
         visibilidad: 'Publico',
@@ -73,6 +74,14 @@ const initialCourses = [
         ]
     }
 ];
+
+// ── Generador de IDs único ─────────────────────────────────────────────────
+function generateId() {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+        return crypto.randomUUID();
+    }
+    return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
 
 function migrateStorageKey(oldKey, newKey) {
     const oldValue = localStorage.getItem(oldKey);
@@ -125,12 +134,10 @@ export function initStore() {
     ensureArrayData(storageKeys.teachers, initialTeachers);
     ensureArrayData(storageKeys.courses, initialCourses);
     ensureMainAdminExists();
-
-    // Migrar contraseñas viejas en texto plano
     migratePasswords();
 }
 
-// Funciones genéricas para CRUD
+// ── CRUD genérico ──────────────────────────────────────────────────────────
 export function getData(key) {
     const raw = localStorage.getItem(key);
     if (!raw) return [];
@@ -144,7 +151,15 @@ export function getData(key) {
 }
 
 export function setData(key, data) {
-    localStorage.setItem(key, JSON.stringify(data));
+    try {
+        localStorage.setItem(key, JSON.stringify(data));
+    } catch (e) {
+        if (e.name === 'QuotaExceededError') {
+            alert('El almacenamiento local está lleno. Eliminá datos innecesarios e intentá de nuevo.');
+        } else {
+            console.error(`Error al guardar ${key}:`, e);
+        }
+    }
 }
 
 export function getById(key, id) {
@@ -154,7 +169,7 @@ export function getById(key, id) {
 
 export function createItem(key, item) {
     const data = getData(key);
-    item.id = Date.now().toString();
+    item.id = generateId();
     data.push(item);
     setData(key, data);
     return item;
@@ -177,7 +192,7 @@ export function deleteItem(key, id) {
     setData(key, filtered);
 }
 
-// Auth — FIX #8: ahora compara usando hash
+// ── Auth ───────────────────────────────────────────────────────────────────
 export function login(email, password) {
     const admins = getData(storageKeys.admins);
     const normalizedEmail = email.trim().toLowerCase();

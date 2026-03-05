@@ -4,17 +4,22 @@ import { navigateTo } from '../router.js';
 export function renderLayout(renderContent) {
     const app = document.getElementById('app');
     const user = getCurrentUser();
-    
+
     if (!user || typeof user.nombres !== 'string' || user.nombres.trim() === '') {
         logout();
         navigateTo('/login');
         return;
     }
-    
-    const userName = user.nombres.trim();
-    const userCargo = typeof user.cargo === 'string' && user.cargo.trim() !== '' ? user.cargo : 'Administrador';
+
+    const userName    = user.nombres.trim();
+    const userCargo   = typeof user.cargo === 'string' && user.cargo.trim() !== '' ? user.cargo : 'Administrador';
     const userInitial = userName.charAt(0).toUpperCase();
-    
+
+    // Usar hash para determinar la ruta activa
+    const currentHash = window.location.hash; // ej: "#/dashboard"
+
+    const isActive = (route) => currentHash === `#${route}` ? 'active' : '';
+
     const layoutHTML = `
         <!-- Overlay para cerrar sidebar en móvil -->
         <div class="sidebar-overlay" id="sidebar-overlay"></div>
@@ -26,19 +31,19 @@ export function renderLayout(renderContent) {
                     <div class="sidebar-title">LMS Admin</div>
                 </div>
                 <nav class="sidebar-nav">
-                    <a href="/dashboard" class="nav-item ${window.location.pathname === '#/dashboard' ? 'active' : ''}" data-link>
+                    <a href="/dashboard" class="nav-item ${isActive('/dashboard')}" data-link>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
                         Dashboard
                     </a>
-                    <a href="/courses" class="nav-item ${window.location.pathname === '#/courses' ? 'active' : ''}" data-link>
+                    <a href="/courses" class="nav-item ${isActive('/courses')}" data-link>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
                         Cursos
                     </a>
-                    <a href="/teachers" class="nav-item ${window.location.pathname === '#/teachers' ? 'active' : ''}" data-link>
+                    <a href="/teachers" class="nav-item ${isActive('/teachers')}" data-link>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                         Docentes
                     </a>
-                    <a href="/admins" class="nav-item ${window.location.pathname === '#/admins' ? 'active' : ''}" data-link>
+                    <a href="/admins" class="nav-item ${isActive('/admins')}" data-link>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
                         Administrativos
                     </a>
@@ -63,7 +68,6 @@ export function renderLayout(renderContent) {
             <main class="main-content">
                 <header class="topbar">
                     <div class="topbar-left">
-                        <!-- Botón hamburguesa — solo visible en móvil via CSS -->
                         <button class="btn-hamburger" id="btn-hamburger" aria-label="Abrir menú">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2"
@@ -87,13 +91,14 @@ export function renderLayout(renderContent) {
             </main>
         </div>
     `;
-    
+
     app.innerHTML = layoutHTML;
-    
+
     document.getElementById('logout-btn').addEventListener('click', () => {
         logout();
         navigateTo('/login');
     });
+
     const sidebar        = document.getElementById('sidebar');
     const btnHamburger   = document.getElementById('btn-hamburger');
     const sidebarOverlay = document.getElementById('sidebar-overlay');
@@ -101,7 +106,7 @@ export function renderLayout(renderContent) {
     function openSidebar() {
         sidebar.classList.add('open');
         sidebarOverlay.classList.add('active');
-        document.body.style.overflow = 'hidden'; // evita scroll del fondo
+        document.body.style.overflow = 'hidden';
     }
 
     function closeSidebar() {
@@ -111,24 +116,20 @@ export function renderLayout(renderContent) {
     }
 
     btnHamburger.addEventListener('click', () => {
-        const isOpen = sidebar.classList.contains('open');
-        isOpen ? closeSidebar() : openSidebar();
+        sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
     });
 
     sidebarOverlay.addEventListener('click', closeSidebar);
 
     sidebar.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', () => {
-            if (sidebarOverlay.classList.contains('active')) {
-                closeSidebar();
-            }
+            if (sidebarOverlay.classList.contains('active')) closeSidebar();
         });
     });
 
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && sidebar.classList.contains('open')) {
-            closeSidebar();
-        }
+        if (e.key === 'Escape' && sidebar.classList.contains('open')) closeSidebar();
     });
+
     renderContent(document.getElementById('page-content'));
 }

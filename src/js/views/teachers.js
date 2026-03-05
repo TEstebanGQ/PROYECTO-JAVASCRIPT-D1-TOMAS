@@ -8,11 +8,15 @@ export function renderTeachers(container) {
         <div class="page-header">
             <h1 class="page-title">Gestión de Docentes</h1>
             <button id="btn-add-teacher" class="btn btn-primary">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+                    <path d="M5 12h14"/><path d="M12 5v14"/>
+                </svg>
                 Nuevo Docente
             </button>
         </div>
-        
+
         <div class="table-container">
             <table class="table">
                 <thead>
@@ -42,29 +46,37 @@ export function renderTeachers(container) {
                         <div class="grid grid-cols-2 gap-4">
                             <div class="form-group">
                                 <label class="form-label">Código *</label>
-                                <input type="text" id="teacher-codigo" class="form-control" required>
+                                <input type="text" id="teacher-codigo" class="form-control"
+                                    placeholder="Ej: DOC-003" required maxlength="20">
+                                <span class="form-error hidden" id="err-codigo"></span>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Identificación *</label>
-                                <input type="text" id="teacher-identificacion" class="form-control" required>
+                                <input type="text" id="teacher-identificacion" class="form-control"
+                                    placeholder="Ej: 1234567890" required maxlength="20">
+                                <span class="form-error hidden" id="err-identificacion"></span>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="form-group">
                                 <label class="form-label">Nombres *</label>
-                                <input type="text" id="teacher-nombres" class="form-control" required>
+                                <input type="text" id="teacher-nombres" class="form-control"
+                                    required minlength="2" maxlength="80">
+                                <span class="form-error hidden" id="err-nombres"></span>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Apellidos *</label>
-                                <input type="text" id="teacher-apellidos" class="form-control" required>
+                                <input type="text" id="teacher-apellidos" class="form-control"
+                                    required minlength="2" maxlength="80">
+                                <span class="form-error hidden" id="err-apellidos"></span>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Correo Electrónico *</label>
                             <input type="email" id="teacher-email" class="form-control" required>
+                            <span class="form-error hidden" id="err-email"></span>
                         </div>
                         <div class="form-group">
-                            <!-- FIX #11: área académica como texto libre con lista de sugerencias -->
                             <label class="form-label">Área Académica *</label>
                             <input
                                 type="text"
@@ -74,6 +86,7 @@ export function renderTeachers(container) {
                                 placeholder="Ej: Informática, Biología..."
                                 required
                                 autocomplete="off"
+                                maxlength="60"
                             >
                             <datalist id="areas-list">
                                 <option value="Matemáticas">
@@ -89,10 +102,13 @@ export function renderTeachers(container) {
                                 <option value="Historia">
                                 <option value="Filosofía">
                             </datalist>
+                            <span class="form-error hidden" id="err-area"></span>
                         </div>
                         <div class="form-group">
                             <label class="form-label">URL de Foto</label>
-                            <input type="url" id="teacher-foto" class="form-control" placeholder="https://ejemplo.com/foto.jpg">
+                            <input type="url" id="teacher-foto" class="form-control"
+                                placeholder="https://ejemplo.com/foto.jpg">
+                            <span class="form-error hidden" id="err-foto"></span>
                         </div>
                     </form>
                 </div>
@@ -103,27 +119,45 @@ export function renderTeachers(container) {
             </div>
         </div>
     `;
-    
+
     if (container) {
         container.innerHTML = html;
         renderTable();
         setupEvents();
     }
-    
+
     function renderTable() {
-        // FIX #9: siempre leer cursos frescos del store
         const courses = getData('lmsCourses');
-        const tbody = document.getElementById('teachers-table-body');
+        const tbody   = document.getElementById('teachers-table-body');
 
         if (teachers.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center" style="color: var(--text-muted); padding: 2rem;">No hay docentes registrados</td></tr>';
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center" style="color: var(--text-muted); padding: 2rem;">
+                        No hay docentes registrados.
+                        <br><br>
+                        <button id="btn-empty-add" class="btn btn-primary btn-sm">+ Agregar primer docente</button>
+                    </td>
+                </tr>`;
+            document.getElementById('btn-empty-add')?.addEventListener('click', () => openModal());
             return;
         }
-        
+
         tbody.innerHTML = teachers.map(teacher => {
             const assignedCourses = courses.filter(c => c.docenteId === teacher.id).length;
-            // Foto con fallback si la URL está vacía
             const foto = teacher.foto || `https://picsum.photos/seed/${teacher.id}/200`;
+
+            let cargaBadge;
+            if (assignedCourses === 0) {
+                cargaBadge = `<span class="badge" style="background:#f3f4f6;color:var(--text-muted);">${assignedCourses} cursos</span>`;
+            } else if (assignedCourses <= 3) {
+                cargaBadge = `<span class="badge badge-success">${assignedCourses} curso${assignedCourses !== 1 ? 's' : ''}</span>`;
+            } else if (assignedCourses <= 6) {
+                cargaBadge = `<span class="badge badge-warning">${assignedCourses} cursos</span>`;
+            } else {
+                cargaBadge = `<span class="badge badge-danger">${assignedCourses} cursos</span>`;
+            }
+
             return `
                 <tr>
                     <td>
@@ -143,113 +177,177 @@ export function renderTeachers(container) {
                     <td class="col-hide-mobile">${teacher.codigo}</td>
                     <td class="col-hide-mobile">${teacher.identificacion}</td>
                     <td><span class="badge badge-info">${teacher.area}</span></td>
-                    <td class="col-hide-mobile">${assignedCourses} curso${assignedCourses !== 1 ? 's' : ''}</td>
+                    <td class="col-hide-mobile">${cargaBadge}</td>
                     <td style="text-align: right; white-space: nowrap;">
-                        <button class="btn btn-outline btn-sm btn-edit" data-id="${teacher.id}" style="margin-right: 0.5rem;">Editar</button>
-                        <button class="btn btn-danger btn-sm btn-delete" data-id="${teacher.id}">Eliminar</button>
+                        <button class="btn btn-outline btn-sm btn-edit"
+                            data-id="${teacher.id}" style="margin-right: 0.5rem;">Editar</button>
+                        <button class="btn btn-danger btn-sm btn-delete"
+                            data-id="${teacher.id}">Eliminar</button>
                     </td>
                 </tr>
             `;
         }).join('');
-        
-        document.querySelectorAll('.btn-edit').forEach(btn => {
-            btn.addEventListener('click', (e) => openModal(e.currentTarget.dataset.id));
-        });
-        
-        document.querySelectorAll('.btn-delete').forEach(btn => {
-            btn.addEventListener('click', (e) => handleDelete(e.currentTarget.dataset.id));
-        });
+
+        document.querySelectorAll('.btn-edit').forEach(btn =>
+            btn.addEventListener('click', (e) => openModal(e.currentTarget.dataset.id))
+        );
+        document.querySelectorAll('.btn-delete').forEach(btn =>
+            btn.addEventListener('click', (e) => handleDelete(e.currentTarget.dataset.id))
+        );
     }
-    
+
     function setupEvents() {
         document.getElementById('btn-add-teacher').addEventListener('click', () => openModal());
         document.getElementById('close-modal').addEventListener('click', closeModal);
         document.getElementById('btn-cancel').addEventListener('click', closeModal);
 
-        // Cerrar al hacer clic en el overlay
         document.getElementById('teacher-modal').addEventListener('click', (e) => {
             if (e.target === e.currentTarget) closeModal();
         });
 
-        document.getElementById('btn-save').addEventListener('click', () => {
-            const form = document.getElementById('teacher-form');
-            if (form.checkValidity()) {
-                handleSave();
-            } else {
-                form.reportValidity();
-            }
-        });
+        document.getElementById('btn-save').addEventListener('click', handleSave);
     }
-    
+
     function openModal(id = null) {
         const modal = document.getElementById('teacher-modal');
-        const title = document.getElementById('modal-title');
-        const form = document.getElementById('teacher-form');
-        
-        form.reset();
+        clearErrors();
+
+        document.getElementById('teacher-form').reset();
         document.getElementById('teacher-id').value = '';
-        
+
         if (id) {
-            title.textContent = 'Editar Docente';
+            document.getElementById('modal-title').textContent = 'Editar Docente';
             const teacher = teachers.find(t => t.id === id);
             if (teacher) {
-                document.getElementById('teacher-id').value = teacher.id;
-                document.getElementById('teacher-codigo').value = teacher.codigo;
+                document.getElementById('teacher-id').value            = teacher.id;
+                document.getElementById('teacher-codigo').value        = teacher.codigo;
                 document.getElementById('teacher-identificacion').value = teacher.identificacion;
-                document.getElementById('teacher-nombres').value = teacher.nombres;
-                document.getElementById('teacher-apellidos').value = teacher.apellidos;
-                document.getElementById('teacher-email').value = teacher.email;
-                document.getElementById('teacher-area').value = teacher.area;
-                document.getElementById('teacher-foto').value = teacher.foto || '';
+                document.getElementById('teacher-nombres').value       = teacher.nombres;
+                document.getElementById('teacher-apellidos').value     = teacher.apellidos;
+                document.getElementById('teacher-email').value         = teacher.email;
+                document.getElementById('teacher-area').value          = teacher.area;
+                document.getElementById('teacher-foto').value          = teacher.foto || '';
             }
         } else {
-            title.textContent = 'Nuevo Docente';
+            document.getElementById('modal-title').textContent = 'Nuevo Docente';
         }
-        
+
         modal.classList.add('active');
     }
-    
+
     function closeModal() {
         document.getElementById('teacher-modal').classList.remove('active');
+        clearErrors();
     }
-    
+
+    function clearErrors() {
+        ['codigo', 'identificacion', 'nombres', 'apellidos', 'email', 'area', 'foto'].forEach(f => {
+            const el = document.getElementById(`err-${f}`);
+            const input = document.getElementById(`teacher-${f}`);
+            if (el)    { el.textContent = ''; el.classList.add('hidden'); }
+            if (input) { input.classList.remove('is-invalid'); }
+        });
+    }
+
+    function showError(field, msg) {
+        const el    = document.getElementById(`err-${field}`);
+        const input = document.getElementById(`teacher-${field}`);
+        if (el)    { el.textContent = msg; el.classList.remove('hidden'); }
+        if (input) { input.classList.add('is-invalid'); }
+    }
+
+    // Unicidad: verifica que el valor no exista en otro registro
+    function isUniqueField(field, value, excludeId = null) {
+        return !getData('lmsTeachers').some(t =>
+            t[field]?.toLowerCase() === value.toLowerCase() && t.id !== excludeId
+        );
+    }
+
     function handleSave() {
-        const id = document.getElementById('teacher-id').value;
-        const teacherData = {
-            codigo:         document.getElementById('teacher-codigo').value.trim(),
-            identificacion: document.getElementById('teacher-identificacion').value.trim(),
-            nombres:        document.getElementById('teacher-nombres').value.trim(),
-            apellidos:      document.getElementById('teacher-apellidos').value.trim(),
-            email:          document.getElementById('teacher-email').value.trim(),
-            area:           document.getElementById('teacher-area').value.trim(),
-            foto:           document.getElementById('teacher-foto').value.trim(),
-        };
-        
+        clearErrors();
+
+        const id             = document.getElementById('teacher-id').value;
+        const codigo         = document.getElementById('teacher-codigo').value.trim();
+        const identificacion = document.getElementById('teacher-identificacion').value.trim();
+        const nombres        = document.getElementById('teacher-nombres').value.trim();
+        const apellidos      = document.getElementById('teacher-apellidos').value.trim();
+        const email          = document.getElementById('teacher-email').value.trim().toLowerCase();
+        const area           = document.getElementById('teacher-area').value.trim();
+        const foto           = document.getElementById('teacher-foto').value.trim();
+
+        let hasError = false;
+
+        if (!codigo) {
+            showError('codigo', 'El código es obligatorio.'); hasError = true;
+        } else if (!isUniqueField('codigo', codigo, id || null)) {
+            showError('codigo', 'Ya existe un docente con ese código.'); hasError = true;
+        }
+
+        if (!identificacion) {
+            showError('identificacion', 'La identificación es obligatoria.'); hasError = true;
+        } else if (!isUniqueField('identificacion', identificacion, id || null)) {
+            showError('identificacion', 'Esa identificación ya está registrada.'); hasError = true;
+        }
+
+        if (!nombres || nombres.length < 2) {
+            showError('nombres', 'Los nombres son obligatorios (mínimo 2 caracteres).'); hasError = true;
+        }
+
+        if (!apellidos || apellidos.length < 2) {
+            showError('apellidos', 'Los apellidos son obligatorios (mínimo 2 caracteres).'); hasError = true;
+        }
+
+        if (!email) {
+            showError('email', 'El correo electrónico es obligatorio.'); hasError = true;
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            showError('email', 'Ingresá un correo válido (ej: nombre@dominio.com).'); hasError = true;
+        } else if (!isUniqueField('email', email, id || null)) {
+            showError('email', 'Ese correo ya está registrado en otro docente.'); hasError = true;
+        }
+
+        if (!area) {
+            showError('area', 'El área académica es obligatoria.'); hasError = true;
+        }
+
+        if (foto && !/^https?:\/\/.+/.test(foto)) {
+            showError('foto', 'La URL de la foto debe comenzar con http:// o https://.'); hasError = true;
+        }
+
+        if (hasError) return;
+
+        const teacherData = { codigo, identificacion, nombres, apellidos, email, area, foto };
+
         if (id) {
             updateItem('lmsTeachers', id, teacherData);
-            showToast('Docente actualizado correctamente'); 
+            showToast('Docente actualizado correctamente');
         } else {
             createItem('lmsTeachers', teacherData);
-            showToast('Docente creado correctamente'); 
+            showToast('Docente creado correctamente');
         }
-        
+
         teachers = getData('lmsTeachers');
         renderTable();
         closeModal();
     }
-    
+
     function handleDelete(id) {
-        // FIX #9: siempre leer cursos frescos
-        const courses = getData('lmsCourses');
+        const courses         = getData('lmsCourses');
         const assignedCourses = courses.filter(c => c.docenteId === id);
 
         if (assignedCourses.length > 0) {
-            // FIX #12: reemplazar alert() nativo por toast
-            showToast('No se puede eliminar: el docente tiene cursos asignados.', 'warning', 4000);
+            const teacher    = teachers.find(t => t.id === id);
+            const nombre     = teacher ? `${teacher.nombres} ${teacher.apellidos}` : 'Este docente';
+            const primerCurso = assignedCourses[0].nombre;
+            const extra      = assignedCourses.length > 1 ? ` y ${assignedCourses.length - 1} más` : '';
+            showToast(
+                `No podés eliminar a ${nombre} porque está asignado al curso "${primerCurso}"${extra}. Reasigná o eliminá el curso primero.`,
+                'warning',
+                5000
+            );
             return;
         }
-        
-        if (confirm('¿Está seguro de eliminar este docente?')) {
+
+        if (confirm('¿Estás seguro de eliminar este docente? Esta acción no se puede deshacer.')) {
             deleteItem('lmsTeachers', id);
             teachers = getData('lmsTeachers');
             showToast('Docente eliminado', 'danger');
