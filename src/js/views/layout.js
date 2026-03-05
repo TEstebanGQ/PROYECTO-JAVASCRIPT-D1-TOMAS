@@ -15,9 +15,7 @@ export function renderLayout(renderContent) {
     const userCargo   = typeof user.cargo === 'string' && user.cargo.trim() !== '' ? user.cargo : 'Administrador';
     const userInitial = userName.charAt(0).toUpperCase();
 
-    // Usar hash para determinar la ruta activa
-    const currentHash = window.location.hash; // ej: "#/dashboard"
-
+    const currentHash = window.location.hash;
     const isActive = (route) => currentHash === `#${route}` ? 'active' : '';
 
     const layoutHTML = `
@@ -47,21 +45,30 @@ export function renderLayout(renderContent) {
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
                         Administrativos
                     </a>
+
+                    <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: auto; padding-top: 0.5rem;">
+                        <button id="logout-btn-nav" class="nav-item" style="width:100%; text-align:left; color: #f87171;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                            Cerrar Sesión
+                        </button>
+                    </div>
                 </nav>
+
                 <div class="sidebar-footer">
-                    <div class="flex items-center gap-2 mb-4">
-                        <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                    <div class="flex items-center gap-2">
+                        <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary);
+                                    color: white; display: flex; align-items: center; justify-content: center;
+                                    font-weight: bold; flex-shrink: 0;">
                             ${userInitial}
                         </div>
-                        <div>
-                            <div style="font-size: 0.875rem; font-weight: 500; color: white;">${userName}</div>
+                        <div style="min-width: 0;">
+                            <div style="font-size: 0.875rem; font-weight: 500; color: white;
+                                        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                ${userName}
+                            </div>
                             <div style="font-size: 0.75rem; color: var(--sidebar-text);">${userCargo}</div>
                         </div>
                     </div>
-                    <button id="logout-btn" class="btn btn-outline" style="width: 100%; color: white; border-color: rgba(255,255,255,0.2);">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
-                        Cerrar Sesión
-                    </button>
                 </div>
             </aside>
 
@@ -79,25 +86,45 @@ export function renderLayout(renderContent) {
                         </button>
                         <div class="topbar-title">Panel de Administración</div>
                     </div>
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2">
                         <a href="/" class="btn btn-outline" data-link>
                             <span>Ver Sitio Público</span>
                         </a>
+                        <button id="logout-btn-topbar" class="btn-logout-mobile" aria-label="Cerrar sesión"
+                            title="Cerrar sesión">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                <polyline points="16 17 21 12 16 7"/>
+                                <line x1="21" x2="9" y1="12" y2="12"/>
+                            </svg>
+                        </button>
+                        <!-- Botón logout desktop (en sidebar footer) -->
+                        <button id="logout-btn" class="btn btn-outline btn-logout-desktop">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                <polyline points="16 17 21 12 16 7"/>
+                                <line x1="21" x2="9" y1="12" y2="12"/>
+                            </svg>
+                            Salir
+                        </button>
                     </div>
                 </header>
-                <div class="page-content" id="page-content">
-                    <!-- Contenido de la vista se inyecta aquí -->
-                </div>
+                <div class="page-content" id="page-content"></div>
             </main>
         </div>
     `;
 
     app.innerHTML = layoutHTML;
 
-    document.getElementById('logout-btn').addEventListener('click', () => {
-        logout();
-        navigateTo('/login');
-    });
+    const doLogout = () => { logout(); navigateTo('/login'); };
+
+    document.getElementById('logout-btn')?.addEventListener('click', doLogout);
+    document.getElementById('logout-btn-topbar')?.addEventListener('click', doLogout);
+    document.getElementById('logout-btn-nav')?.addEventListener('click', doLogout);
 
     const sidebar        = document.getElementById('sidebar');
     const btnHamburger   = document.getElementById('btn-hamburger');
