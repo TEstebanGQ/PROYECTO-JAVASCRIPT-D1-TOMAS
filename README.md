@@ -1,174 +1,154 @@
-# LMS ABC - Proyecto MVP
+# LMS ABC — Learning Management System
 
-Aplicación web tipo **LMS (Learning Management System)** hecha con **HTML, CSS y JavaScript vanilla**, usando **localStorage** para persistencia.
-
-Este proyecto permite administrar:
-- Docentes
-- Cursos
-- Módulos
-- Lecciones
-- Administrativos
-
-También incluye una vista pública para que cualquier persona pueda ver cursos.
+Sistema de gestión de aprendizaje (LMS) para la Institución Educativa ABC. Permite administrar docentes, cursos, módulos y lecciones, con una vista pública para que cualquier visitante pueda explorar los cursos disponibles.
 
 ---
 
-## 1) Objetivo del proyecto
+## Tecnologías utilizadas
 
-Construir un MVP para la Institución Educativa ABC que permita gestionar información académica y administrativa de forma simple.
+- **HTML5** — estructura de las vistas
+- **CSS3** — estilos y diseño responsive
+- **JavaScript (ES Modules)** — lógica del sistema
+- **localStorage** — persistencia de datos en el navegador
 
----
-
-## 2) Tecnologías usadas
-
-- **HTML5**
-- **CSS3**
-- **JavaScript (ES Modules)**
-- **localStorage** (como persistencia de datos)
-
-No se usan librerías externas de frontend ni backend.
+No se utilizan frameworks, librerías externas ni bases de datos.
 
 ---
 
-## 3) Cómo ejecutar el proyecto
+## Cómo ejecutar el proyecto
 
-### Opción recomendada (Live Server)
-1. Abre la carpeta del proyecto en VS Code.
-2. Instala la extensión **Live Server**.
-3. Abre `index.html` y pulsa **"Open with Live Server"**.
+### Opción recomendada — Live Server (VS Code)
+
+1. Abrí la carpeta del proyecto en **Visual Studio Code**.
+2. Instalá la extensión **Live Server** (si no la tenés).
+3. Hacé clic derecho sobre `index.html` → **Open with Live Server**.
 
 ### Opción alternativa
-Abrir `index.html` directamente en el navegador.
+
+Abrí el archivo `index.html` directamente en tu navegador.
+
+> ⚠️ Si abrís el archivo sin servidor local, los módulos ES (`type="module"`) pueden no cargar correctamente en algunos navegadores por restricciones de CORS. Se recomienda siempre usar Live Server.
 
 ---
 
-## 4) Credenciales de acceso (por defecto)
+## Credenciales de acceso por defecto
 
-- **Email:** `admin@abc.edu`
-- **Password:** `admin`
+| Campo    | Valor             |
+|----------|-------------------|
+| Email    | `admin@abc.edu`   |
+| Contraseña | `admin`         |
 
-> Si cambias estas credenciales en el módulo de administrativos, debes iniciar sesión con las nuevas.
+> Si modificás las credenciales desde el módulo de Administrativos, debés iniciar sesión con los nuevos datos.
 
 ---
 
-## 5) Estructura del proyecto
+## Estructura del proyecto
 
-```text
+```
 index.html
 src/
   css/
-    styles.css
+    styles.css          → estilos globales, variables, componentes
+    responsive.css      → media queries para mobile/tablet/desktop
   js/
-    main.js
-    router.js
-    store.js
+    main.js             → punto de entrada
+    router.js           → enrutador por hash (#/ruta)
+    store.js            → CRUD genérico sobre localStorage y autenticación
+    utils/
+      hash.js           → función de hash para contraseñas (djb2)
+      modal.js          → helpers para abrir/cerrar modales
+      toast.js          → notificaciones flotantes
     views/
-      public.js
-      login.js
-      layout.js
-      dashboard.js
-      teachers.js
-      courses.js
-      admins.js
+      public.js         → vista pública de cursos
+      login.js          → formulario de inicio de sesión
+      layout.js         → estructura principal (sidebar + topbar)
+      dashboard.js      → panel con estadísticas y accesos rápidos
+      teachers.js       → CRUD de docentes + panel de carga académica
+      admins.js         → CRUD de administrativos
+      courses/
+        index.js        → controlador de la vista de cursos
+        list.js         → tabla con filtros
+        form.js         → formulario de creación/edición de curso
+        modules.js      → gestión de módulos dentro de un curso
+        lessons.js      → gestión de lecciones dentro de un módulo
 img/
+  icons/
+  fondo/
 ```
 
 ---
 
-## 6) Módulos implementados
+## Módulos del sistema
 
-### 6.1 Login
+### Login
 - Autenticación por email y contraseña.
-- Redirección al dashboard si las credenciales son válidas.
+- Redirección automática al dashboard si la sesión ya está activa.
 - Protección de rutas privadas.
 
-### 6.2 Dashboard
-- Estadísticas rápidas:
-  - Cursos activos
-  - Docentes registrados
-  - Administrativos
-- Accesos directos a módulos principales.
+### Dashboard
+- Muestra el total de cursos activos, docentes registrados y administrativos.
+- Accesos rápidos a los módulos principales.
 
-### 6.3 Gestión de docentes (CRUD)
-- Crear, listar, editar y eliminar docentes.
-- Datos: código, identificación, nombres, apellidos, email, foto y área.
-- Restricción aplicada: **no se elimina un docente si tiene cursos asignados**.
+### Gestión de Docentes
+- Crear, editar y eliminar docentes.
+- Campos: código, identificación, nombres, apellidos, email, foto y área académica.
+- **Restricción:** no se puede eliminar un docente que tenga cursos asignados.
+- **Panel de carga académica:** botón "📋 Carga" que muestra todos los cursos asignados al docente, con módulos, lecciones, duración y fecha.
 
-### 6.4 Gestión de cursos + módulos + lecciones (CRUD)
-- Crear y editar curso con:
-  - código, nombre, descripción, docente
-  - categoría, duración, estado, visibilidad, etiquetas
-- Gestión de módulos dentro del curso.
-- Gestión de lecciones dentro de cada módulo.
-- Filtros en tabla por texto, estado y visibilidad.
+### Gestión de Cursos
+- Crear, editar y eliminar cursos.
+- Campos: código, nombre, descripción, docente, categoría, tipo, duración, estado, visibilidad, etiquetas y fecha de inicio.
+- Gestión de **módulos** dentro de cada curso.
+- Gestión de **lecciones** dentro de cada módulo (título, intensidad horaria, contenido y multimedia).
+- Filtros en tabla por: texto, estado, visibilidad, tipo de curso y rango de fechas.
 
-### 6.5 Gestión de administrativos (CRUD)
-- Crear, listar, editar y eliminar administrativos.
-- Datos: identificación, nombres, apellidos, email, teléfono, cargo, contraseña.
+### Gestión de Administrativos
+- Crear, editar y eliminar administrativos.
+- Campos: identificación, nombres, apellidos, email, teléfono, cargo y contraseña.
+- El administrador principal (`admin-1`) no puede ser eliminado.
 
-### 6.6 Vista pública
-- Lista de cursos públicos.
-- Detalle de curso al hacer clic (docente, descripción, módulos y lecciones).
-
----
-
-## 7) Persistencia de datos (localStorage)
-
-Se usan estas claves:
-- `lmsAdmins`
-- `lmsTeachers`
-- `lmsCourses`
-- `lmsCurrentUser`
-
-También existe migración automática desde claves antiguas (`snake_case`) a las nuevas (`camelCase`).
+### Vista Pública
+- Accesible sin iniciar sesión desde la ruta raíz `/`.
+- Lista todos los cursos con visibilidad **Público**.
+- Cada tarjeta muestra: nombre, categoría, tipo, docente, duración y fecha de inicio.
+- Al hacer clic en una tarjeta se abre un modal con el detalle completo del curso, incluyendo módulos y lecciones.
 
 ---
 
-## 8) Revisión rápida contra los requerimientos
+## Persistencia de datos
 
-### Cumplido
-- Login con email y contraseña.
-- Dashboard principal con resumen.
-- CRUD de docentes.
-- CRUD de cursos, módulos y lecciones.
-- CRUD de administrativos.
-- Restricción de eliminación de docentes con cursos asignados.
-- Vista pública de cursos.
-- Persistencia con localStorage.
+Los datos se guardan en `localStorage` del navegador con estas claves:
 
-### Parcial o por mejorar
-- Filtros de cursos: falta filtro específico por **fecha** y **tipo de curso** como indica el enunciado.
-- "Panel individual" del docente: actualmente se muestra resumen por fila, pero no una vista dedicada por docente.
-- Seguridad: al ser MVP en frontend, credenciales y datos viven en localStorage.
+| Clave            | Contenido                  |
+|------------------|----------------------------|
+| `lmsAdmins`      | Lista de administrativos   |
+| `lmsTeachers`    | Lista de docentes          |
+| `lmsCourses`     | Lista de cursos            |
+| `lmsCurrentUser` | Sesión activa              |
+
+Al iniciar la aplicación por primera vez se cargan datos de ejemplo (un admin, dos docentes y un curso) para facilitar la demostración.
 
 ---
 
-## 9) Flujo de uso recomendado (demo)
+## Flujo de uso recomendado (demo)
 
-1. Entrar al login con las credenciales por defecto.
-2. Ir al dashboard para ver métricas.
-3. Crear un docente.
-4. Crear un curso y asignar el docente.
-5. Agregar módulos y lecciones.
-6. Ir a "Ver sitio público" y abrir el detalle de un curso.
-7. Volver al panel y probar edición/eliminación.
-
----
-
-## 10) Notas para la entrega en GitHub
-
-Asegúrate de incluir:
-1. Este `README.md`.
-2. Capturas de pantalla del login, dashboard y módulos.
-3. URL del despliegue (si publicas en Netlify/GitHub Pages).
+1. Entrar al sistema con las credenciales por defecto.
+2. Revisar el dashboard con las estadísticas iniciales.
+3. Crear un nuevo docente en **Gestión de Docentes**.
+4. Crear un nuevo curso en **Gestión de Cursos** y asignarle el docente.
+5. Agregar módulos y lecciones al curso.
+6. Ir a **Ver Sitio Público** y verificar que el curso aparece con su fecha de inicio.
+7. Volver al panel y probar los filtros en la tabla de cursos.
+8. Hacer clic en "📋 Carga" sobre un docente para ver su panel académico.
 
 ---
 
-## 11) Próximos pasos sugeridos (fáciles para seguir aprendiendo)
+## Aspectos de seguridad (MVP)
 
-1. Agregar filtro por fecha en cursos.
-2. Crear una vista "detalle docente" con cursos asignados.
-3. Mejorar validaciones de formularios.
-4. Separar componentes UI reutilizables.
-5. Agregar pruebas básicas de flujos críticos.
+Al ser un MVP de frontend puro:
 
+- Las contraseñas se almacenan con un hash simple (djb2) en `localStorage`. 
+- No existe backend ni validación del lado del servidor.
+- Para un entorno real se recomienda implementar autenticación con JWT, HTTPS y una base de datos.
+
+---
