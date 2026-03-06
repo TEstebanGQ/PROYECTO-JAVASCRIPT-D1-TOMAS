@@ -3,6 +3,9 @@
 Sistema de gestión de aprendizaje (LMS) para la Institución Educativa ABC. Permite administrar docentes, cursos, módulos y lecciones, con una vista pública para que cualquier visitante pueda explorar los cursos disponibles.
 
 ---
+## Demo en línea
+
+[![Ver demo](https://img.shields.io/badge/Ver%20demo-Netlify-00C7B7?style=for-the-badge&logo=netlify)](https://proyecto-d1-js.netlify.app/)
 
 ## Tecnologías utilizadas
 
@@ -26,8 +29,6 @@ No se utilizan frameworks, librerías externas ni bases de datos.
 ### Opción alternativa
 
 Abrí el archivo `index.html` directamente en tu navegador.
-
-> ⚠️ Si abrís el archivo sin servidor local, los módulos ES (`type="module"`) pueden no cargar correctamente en algunos navegadores por restricciones de CORS. Se recomienda siempre usar Live Server.
 
 ---
 
@@ -143,7 +144,7 @@ Al iniciar la aplicación por primera vez se cargan datos de ejemplo (un admin, 
 
 ---
 
-## Aspectos de seguridad (MVP)
+## Aspectos de seguridad 
 
 Al ser un MVP de frontend puro:
 
