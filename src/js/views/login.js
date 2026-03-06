@@ -56,7 +56,6 @@ export function renderLoginView(container) {
     if (!container) return;
     container.innerHTML = html;
 
-    // Toggle mostrar/ocultar contraseña
     document.getElementById('toggle-password').addEventListener('click', () => {
         const input   = document.getElementById('password');
         const eyeIcon = document.getElementById('eye-icon');

@@ -1,6 +1,3 @@
-// courses/lessons.js
-// Gestión de lecciones dentro de un módulo
-
 import { updateItem, getData } from '../../store.js';
 import { openModal, closeModal, setupModalClose } from '../../utils/modal.js';
 import { showToast } from '../../utils/toast.js';
@@ -38,7 +35,6 @@ export function renderLessons(container, course, mIdx, onUpdate) {
 
     container.innerHTML = buildLessonsHTML(lecciones, mIdx);
 
-    // ── Añadir lección ────────────────────────────────────────────────────
     container.querySelector('.btn-add-lesson')?.addEventListener('click', () => {
         resetLessonForm();
         document.querySelector('#lesson-mindex').value = mIdx;
@@ -47,7 +43,6 @@ export function renderLessons(container, course, mIdx, onUpdate) {
         openModal('lesson-modal');
     });
 
-    // ── Editar lección ────────────────────────────────────────────────────
     container.querySelectorAll('.btn-edit-lesson').forEach(btn => {
         btn.addEventListener('click', e => {
             const lIdx = Number(e.currentTarget.dataset.lindex);
@@ -65,7 +60,6 @@ export function renderLessons(container, course, mIdx, onUpdate) {
         });
     });
 
-    // ── Eliminar lección ──────────────────────────────────────────────────
     container.querySelectorAll('.btn-delete-lesson').forEach(btn => {
         btn.addEventListener('click', e => {
             if (!confirm('¿Eliminar esta lección?')) return;
@@ -78,7 +72,6 @@ export function renderLessons(container, course, mIdx, onUpdate) {
         });
     });
 
-    // ── Modal de lección (solo lo monta la primera vez) ───────────────────
     if (!document.querySelector('#lesson-modal')) {
         document.body.insertAdjacentHTML('beforeend', buildLessonModalHTML());
     }
@@ -87,7 +80,6 @@ export function renderLessons(container, course, mIdx, onUpdate) {
     setupModalClose('lesson-modal');
 }
 
-// ── Guardar lección ────────────────────────────────────────────────────────
 function setupLessonSave(course, onUpdate) {
     const btn = document.querySelector('#btn-save-lesson');
     if (!btn) return;
@@ -178,7 +170,6 @@ function resetLessonForm() {
     clearLessonErrors();
 }
 
-// ── HTML lista de lecciones ────────────────────────────────────────────────
 function buildLessonsHTML(lecciones, mIdx) {
     return `
         <div style="padding-top:0.5rem;border-top:1px dashed var(--border-color);">
@@ -221,7 +212,6 @@ function buildLessonItem(lec, mIdx, lIndex) {
         </li>`;
 }
 
-// ── HTML modal de lección ──────────────────────────────────────────────────
 function buildLessonModalHTML() {
     return `
         <div id="lesson-modal" class="modal-overlay">

@@ -170,7 +170,6 @@ export function renderAdmins(container) {
 
         document.getElementById('btn-save').addEventListener('click', handleSave);
 
-        // Toggle contraseña
         document.getElementById('toggle-admin-password').addEventListener('click', () => {
             const input = document.getElementById('admin-password');
             input.type = input.type === 'text' ? 'password' : 'text';
@@ -277,8 +276,6 @@ export function renderAdmins(container) {
         if (!cargo) {
             showError('cargo', 'El cargo es obligatorio.'); hasError = true;
         }
-
-        // Contraseña: obligatoria al crear, opcional al editar pero mínimo 6 si se ingresa
         if (!id && !passwordInput) {
             showError('password', 'La contraseña es obligatoria para crear un administrativo.'); hasError = true;
         } else if (passwordInput && passwordInput.length < 6) {

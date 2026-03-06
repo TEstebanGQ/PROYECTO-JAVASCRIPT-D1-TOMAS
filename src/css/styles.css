@@ -6,6 +6,7 @@
     --danger:       #ef4444;
     --danger-hover: #dc2626;
     --warning:      #f59e0b;
+    --info:         #3b82f6;
     --bg-body: #f3f4f6;
     --bg-card: #ffffff;
     --sidebar-bg:          #111827;
@@ -106,6 +107,9 @@ img { max-width: 100%; display: block; }
 
 .btn-outline       { border: 1px solid var(--border-color); background-color: transparent; color: var(--text-main); }
 .btn-outline:hover { background-color: var(--bg-body); }
+
+.btn-info       { background-color: var(--info); color: #fff; }
+.btn-info:hover { background-color: #2563eb; }
 
 .btn-sm       { padding: 0.25rem 0.5rem; font-size: 0.75rem; }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }

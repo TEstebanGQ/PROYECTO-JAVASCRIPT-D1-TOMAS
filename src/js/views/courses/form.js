@@ -5,24 +5,18 @@ import { createItem, updateItem, getData } from '../../store.js';
 import { showToast } from '../../utils/toast.js';
 import { renderModules } from './modules.js';
 
-/**
- * Formatea un número de horas con singular/plural
- * @param {number} n
- * @returns {string}
- */
 function formatHoras(n) {
     return n === 1 ? '1 hora' : `${n} horas`;
 }
 
-/**
- * Extrae el número de un string tipo "40 horas" → 40
- * @param {string} val
- * @returns {string}
- */
 function parseHoras(val) {
     if (!val) return '';
     const n = parseInt(val);
     return isNaN(n) ? '' : String(n);
+}
+
+function todayStr() {
+    return new Date().toISOString().split('T')[0];
 }
 
 /**
@@ -50,15 +44,14 @@ export function renderCourseForm(container, course, teachers, { onBack, onSaved 
     }
 
     function handleSave() {
-        const duracionRaw  = parseInt(container.querySelector('#course-duracion').value);
-        const etiquetasRaw = container.querySelector('#course-etiquetas').value.trim();
+        const duracionRaw      = parseInt(container.querySelector('#course-duracion').value);
+        const etiquetasRaw     = container.querySelector('#course-etiquetas').value.trim();
         const etiquetasLimpias = etiquetasRaw
             ? etiquetasRaw.split(',').map(t => t.trim()).filter(Boolean).join(', ')
             : '';
 
-        // ✅ Leer fecha del campo de fecha editable
         const fechaInput = container.querySelector('#course-fecha').value;
-        const fecha = fechaInput || new Date().toISOString().split('T')[0];
+        const fecha      = fechaInput || todayStr();
 
         const existing = course ? getData('lmsCourses').find(c => c.id === course.id) : null;
 
@@ -92,14 +85,14 @@ export function renderCourseForm(container, course, teachers, { onBack, onSaved 
     }
 }
 
-// ── Validación JS manual ───────────────────────────────────────────────────
+// ── Validación ─────────────────────────────────────────────────────────────
 function validateForm(container, course) {
     clearErrors(container);
     let ok = true;
 
     const set = (id, msg) => {
-        const errEl  = container.querySelector(`#err-${id}`);
-        const input  = container.querySelector(`#course-${id}`);
+        const errEl = container.querySelector(`#err-${id}`);
+        const input = container.querySelector(`#course-${id}`);
         if (errEl)  { errEl.textContent = msg; errEl.classList.remove('hidden'); }
         if (input)  { input.classList.add('is-invalid'); }
         ok = false;
@@ -113,6 +106,7 @@ function validateForm(container, course) {
     const tipo        = container.querySelector('#course-tipo').value;
     const duracionVal = container.querySelector('#course-duracion').value;
     const duracion    = parseInt(duracionVal);
+    const fechaInput  = container.querySelector('#course-fecha').value;
 
     if (!codigo) {
         set('codigo', 'El código del curso es obligatorio.');
@@ -149,6 +143,11 @@ function validateForm(container, course) {
         set('duracion', 'Ingresá un número entero mayor a 0 (ej: 40).');
     }
 
+    // ✅ Validación de fecha: no puede ser anterior a hoy
+    if (fechaInput && fechaInput < todayStr()) {
+        set('fecha', 'La fecha de inicio no puede ser anterior a hoy.');
+    }
+
     return ok;
 }
 
@@ -175,8 +174,9 @@ function buildHTML(course, teachers) {
 
     const duracionNum = parseHoras(v('duracion'));
 
-    // ✅ Fecha: si existe en el curso la cargamos; si no, hoy por defecto
-    const fechaValor = v('fecha') || new Date().toISOString().split('T')[0];
+    // Fecha: si existe la cargamos; si no, hoy por defecto
+    const fechaValor = v('fecha') || todayStr();
+    const hoy        = todayStr();
 
     return `
         <div class="page-header">
@@ -290,12 +290,13 @@ function buildHTML(course, teachers) {
                             </div>
                         </div>
 
-                        <!-- ✅ Fecha de inicio y Etiquetas -->
+                        <!-- Fecha de inicio y Etiquetas -->
                         <div class="grid grid-cols-2 gap-4">
                             <div class="form-group">
                                 <label class="form-label">Fecha de Inicio</label>
                                 <input type="date" id="course-fecha" class="form-control"
-                                    value="${fechaValor}">
+                                    value="${fechaValor}"
+                                    min="${hoy}">
                                 <span class="form-error hidden" id="err-fecha"></span>
                             </div>
                             <div class="form-group">

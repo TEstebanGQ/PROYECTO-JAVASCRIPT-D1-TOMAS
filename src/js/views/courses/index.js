@@ -2,7 +2,6 @@ import { getData } from '../../store.js';
 import { renderCourseList } from './list.js';
 import { renderCourseForm } from './form.js';
 
-// Estado compartido entre módulos
 export const state = {
     currentView: 'list',   
     currentCourseId: null,

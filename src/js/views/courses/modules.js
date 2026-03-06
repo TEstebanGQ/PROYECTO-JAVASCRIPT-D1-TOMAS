@@ -1,6 +1,3 @@
-// courses/modules.js
-// Gestión de módulos dentro de un curso existente
-
 import { updateItem, getData } from '../../store.js';
 import { openModal, closeModal, setupModalClose } from '../../utils/modal.js';
 import { showToast } from '../../utils/toast.js';
@@ -15,8 +12,7 @@ function formatHoras(n) {
     return n === 1 ? '1 hora' : `${n} horas`;
 }
 
-/**
- * Extrae el número de un string tipo "10 horas" → 10
+/** Parsea el valor de horas, asegurando que sea un entero positivo
  * @param {string} val
  * @returns {string}
  */
@@ -38,14 +34,13 @@ export function renderModules(container, course, onUpdate) {
 
     container.innerHTML = buildPanelHTML(modulos);
 
-    // ── Abrir modal para nuevo módulo ─────────────────────────────────────
     container.querySelector('#btn-add-module')?.addEventListener('click', () => {
         resetModuleForm();
         document.querySelector('#module-modal-title').textContent = 'Nuevo Módulo';
         openModal('module-modal');
     });
 
-    // ── Editar módulo ─────────────────────────────────────────────────────
+    // Editar módulo
     container.querySelectorAll('.btn-edit-module').forEach(btn => {
         btn.addEventListener('click', e => {
             const idx = Number(e.currentTarget.dataset.index);
@@ -54,14 +49,14 @@ export function renderModules(container, course, onUpdate) {
             document.querySelector('#module-codigo').value       = mod.codigo;
             document.querySelector('#module-nombre').value       = mod.nombre;
             document.querySelector('#module-descripcion').value  = mod.descripcion || '';
-            // ✅ Cargar horas al editar
+
             document.querySelector('#module-horas').value        = parseHoras(mod.horas || '');
             document.querySelector('#module-modal-title').textContent = 'Editar Módulo';
             openModal('module-modal');
         });
     });
 
-    // ── Eliminar módulo ───────────────────────────────────────────────────
+    //  Eliminar módulo
     container.querySelectorAll('.btn-delete-module').forEach(btn => {
         btn.addEventListener('click', e => {
             if (!confirm('¿Eliminar este módulo y todas sus lecciones?')) return;
@@ -74,28 +69,23 @@ export function renderModules(container, course, onUpdate) {
         });
     });
 
-    // ── Renderizar lecciones de cada módulo ───────────────────────────────
+
     container.querySelectorAll('.lessons-container').forEach(el => {
         const mIdx = Number(el.dataset.mindex);
         renderLessons(el, course, mIdx, onUpdate);
     });
 
-    // ── Guardar módulo (nuevo o edición) ──────────────────────────────────
     setupModuleSave(course, onUpdate);
     setupModalClose('module-modal');
 }
-
-// ── Guardar módulo ─────────────────────────────────────────────────────────
 function setupModuleSave(course, onUpdate) {
     const btnSave = document.querySelector('#btn-save-module');
     if (!btnSave) return;
 
-    // Clonar para evitar listeners duplicados
     const fresh = btnSave.cloneNode(true);
     btnSave.replaceWith(fresh);
 
     fresh.addEventListener('click', () => {
-        // Limpiar errores previos
         clearModuleErrors();
 
         const codigo      = document.querySelector('#module-codigo').value.trim();
@@ -128,7 +118,6 @@ function setupModuleSave(course, onUpdate) {
             codigo,
             nombre,
             descripcion,
-            // ✅ Guardar horas con formato "N horas", o cadena vacía si no se ingresó
             horas:       horasVal ? formatHoras(horasNum) : '',
             lecciones:   isEdit ? updated.modulos[idx].lecciones : [],
         };
@@ -169,7 +158,6 @@ function resetModuleForm() {
     clearModuleErrors();
 }
 
-// ── HTML del panel de módulos ──────────────────────────────────────────────
 function buildPanelHTML(modulos) {
     return `
         <div class="flex justify-between items-center mb-4">
@@ -202,7 +190,6 @@ function buildPanelHTML(modulos) {
                                     placeholder="Ej: MOD-001" required maxlength="20">
                                 <span class="form-error hidden" id="err-module-codigo"></span>
                             </div>
-                            <!-- ✅ Campo de horas del módulo -->
                             <div class="form-group">
                                 <label class="form-label">Intensidad (horas)</label>
                                 <input type="number" id="module-horas" class="form-control"

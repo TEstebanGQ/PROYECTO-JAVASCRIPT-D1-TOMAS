@@ -1,151 +1,93 @@
 import { hashPassword } from './utils/hash.js';
 
 const storageKeys = {
-    admins: 'lmsAdmins',
-    teachers: 'lmsTeachers',
-    courses: 'lmsCourses',
+    admins:      'lmsAdmins',
+    teachers:    'lmsTeachers',
+    courses:     'lmsCourses',
     currentUser: 'lmsCurrentUser',
 };
 
 const defaultAdmin = {
-    id: 'admin-1',
+    id:             'admin-1',
     identificacion: '123456789',
-    nombres: 'Admin',
-    apellidos: 'Principal',
-    email: 'admin@abc.edu',
-    telefono: '3001234567',
-    cargo: 'Administrador General',
-    password: 'admin'
+    nombres:        'Admin',
+    apellidos:      'Principal',
+    email:          'admin@abc.edu',
+    telefono:       '3001234567',
+    cargo:          'Administrador General',
+    password:       hashPassword('admin'),
 };
 
 const initialTeachers = [
     {
-        id: 't-1',
-        codigo: 'DOC-001',
+        id:             't-1',
+        codigo:         'DOC-001',
         identificacion: '987654321',
-        nombres: 'Carlos',
-        apellidos: 'Mendoza',
-        email: 'cmendoza@abc.edu',
-        foto: 'https://picsum.photos/seed/teacher1/200',
-        area: 'Informática'
+        nombres:        'Carlos',
+        apellidos:      'Mendoza',
+        email:          'cmendoza@abc.edu',
+        foto:           'https://picsum.photos/seed/teacher1/200',
+        area:           'Informática',
     },
     {
-        id: 't-2',
-        codigo: 'DOC-002',
+        id:             't-2',
+        codigo:         'DOC-002',
         identificacion: '987654322',
-        nombres: 'Laura',
-        apellidos: 'Gómez',
-        email: 'lgomez@abc.edu',
-        foto: 'https://picsum.photos/seed/teacher2/200',
-        area: 'Biología'
-    }
+        nombres:        'Laura',
+        apellidos:      'Gómez',
+        email:          'lgomez@abc.edu',
+        foto:           'https://picsum.photos/seed/teacher2/200',
+        area:           'Biología',
+    },
 ];
 
 const initialCourses = [
     {
-        id: 'c-1',
-        codigo: 'CUR-001',
-        nombre: 'Introducción a la Programación',
+        id:          'c-1',
+        codigo:      'CUR-001',
+        nombre:      'Introducción a la Programación',
         descripcion: 'Aprende los fundamentos de la programación con JavaScript.',
-        docenteId: 't-1',
-        categorias: 'Tecnología',
-        tipo: 'Virtual',
-        duracion: '40 horas',
-        etiquetas: 'js, web, basico',
+        docenteId:   't-1',
+        categorias:  'Tecnología',
+        tipo:        'Virtual',
+        duracion:    '40 horas',
+        etiquetas:   'js, web, basico',
         visibilidad: 'Publico',
-        estado: 'Activo',
-        fecha: new Date().toISOString().split('T')[0],
+        estado:      'Activo',
+        fecha:       new Date().toISOString().split('T')[0],
         modulos: [
             {
-                id: 'm-1',
-                codigo: 'MOD-001',
-                nombre: 'Fundamentos',
+                id:          'm-1',
+                codigo:      'MOD-001',
+                nombre:      'Fundamentos',
                 descripcion: 'Conceptos básicos de programación',
                 lecciones: [
                     {
-                        id: 'l-1',
-                        titulo: 'Variables y Tipos de Datos',
+                        id:         'l-1',
+                        titulo:     'Variables y Tipos de Datos',
                         intensidad: '2 horas',
-                        contenido: 'En esta lección aprenderemos sobre variables...',
-                        multimedia: 'https://youtube.com/'
-                    }
-                ]
-            }
-        ]
-    }
+                        contenido:  'En esta lección aprenderemos sobre variables...',
+                        multimedia: 'https://youtube.com/',
+                    },
+                ],
+            },
+        ],
+    },
 ];
 
-// ── Generador de IDs único ─────────────────────────────────────────────────
 function generateId() {
     if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
         return crypto.randomUUID();
     }
     return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
-
-function migrateStorageKey(oldKey, newKey) {
-    const oldValue = localStorage.getItem(oldKey);
-    const newValue = localStorage.getItem(newKey);
-    if (oldValue && !newValue) {
-        localStorage.setItem(newKey, oldValue);
-    }
-}
-
-function ensureArrayData(key, fallback) {
-    const currentData = getData(key);
-    if (currentData.length === 0) {
-        localStorage.setItem(key, JSON.stringify(fallback));
-    }
-}
-
-function ensureMainAdminExists() {
-    const admins = getData(storageKeys.admins);
-    const existsMainAdmin = admins.some(admin => admin.id === defaultAdmin.id);
-    if (!existsMainAdmin) {
-        admins.unshift(defaultAdmin);
-        setData(storageKeys.admins, admins);
-    }
-}
-
-function migratePasswords() {
-    const admins = getData(storageKeys.admins);
-    let changed = false;
-
-    const migrated = admins.map(admin => {
-        if (admin.password && !/^[0-9a-f]{8}$/.test(admin.password)) {
-            changed = true;
-            return { ...admin, password: hashPassword(admin.password) };
-        }
-        return admin;
-    });
-
-    if (changed) {
-        setData(storageKeys.admins, migrated);
-    }
-}
-
-export function initStore() {
-    migrateStorageKey('lms_admins', storageKeys.admins);
-    migrateStorageKey('lms_teachers', storageKeys.teachers);
-    migrateStorageKey('lms_courses', storageKeys.courses);
-    migrateStorageKey('lms_currentUser', storageKeys.currentUser);
-
-    ensureArrayData(storageKeys.admins, [defaultAdmin]);
-    ensureArrayData(storageKeys.teachers, initialTeachers);
-    ensureArrayData(storageKeys.courses, initialCourses);
-    ensureMainAdminExists();
-    migratePasswords();
-}
-
-// ── CRUD genérico ──────────────────────────────────────────────────────────
 export function getData(key) {
     const raw = localStorage.getItem(key);
     if (!raw) return [];
     try {
         const parsed = JSON.parse(raw);
         return Array.isArray(parsed) ? parsed : [];
-    } catch (error) {
-        console.error(`Error al leer ${key} desde localStorage:`, error);
+    } catch {
         return [];
     }
 }
@@ -161,10 +103,28 @@ export function setData(key, data) {
         }
     }
 }
+export function initStore() {
 
+    if (getData(storageKeys.admins).length === 0) {
+        setData(storageKeys.admins, [defaultAdmin]);
+    }
+    if (getData(storageKeys.teachers).length === 0) {
+        setData(storageKeys.teachers, initialTeachers);
+    }
+    if (getData(storageKeys.courses).length === 0) {
+        setData(storageKeys.courses, initialCourses);
+    }
+
+    // Garantizar que el admin principal siempre exista
+    const admins = getData(storageKeys.admins);
+    if (!admins.some(a => a.id === 'admin-1')) {
+        setData(storageKeys.admins, [defaultAdmin, ...admins]);
+    }
+}
+
+// CRUD genérico
 export function getById(key, id) {
-    const data = getData(key);
-    return data.find(item => item.id === id);
+    return getData(key).find(item => item.id === id) || null;
 }
 
 export function createItem(key, item) {
@@ -176,7 +136,7 @@ export function createItem(key, item) {
 }
 
 export function updateItem(key, id, updatedItem) {
-    const data = getData(key);
+    const data  = getData(key);
     const index = data.findIndex(item => item.id === id);
     if (index !== -1) {
         data[index] = { ...data[index], ...updatedItem };
@@ -187,20 +147,16 @@ export function updateItem(key, id, updatedItem) {
 }
 
 export function deleteItem(key, id) {
-    const data = getData(key);
-    const filtered = data.filter(item => item.id !== id);
+    const filtered = getData(key).filter(item => item.id !== id);
     setData(key, filtered);
 }
-
-// ── Auth ───────────────────────────────────────────────────────────────────
 export function login(email, password) {
-    const admins = getData(storageKeys.admins);
+    const admins       = getData(storageKeys.admins);
     const normalizedEmail = email.trim().toLowerCase();
-    const hashedInput = hashPassword(password);
+    const hashedInput  = hashPassword(password);
 
-    const admin = admins.find(a =>
-        a.email.toLowerCase() === normalizedEmail &&
-        a.password === hashedInput
+    const admin = admins.find(
+        a => a.email.toLowerCase() === normalizedEmail && a.password === hashedInput
     );
 
     if (admin) {
@@ -215,13 +171,12 @@ export function logout() {
 }
 
 export function getCurrentUser() {
-    const user = localStorage.getItem(storageKeys.currentUser);
-    if (!user) return null;
+    const raw = localStorage.getItem(storageKeys.currentUser);
+    if (!raw) return null;
     try {
-        const parsed = JSON.parse(user);
+        const parsed = JSON.parse(raw);
         return parsed && typeof parsed === 'object' ? parsed : null;
-    } catch (error) {
-        console.error('Error al leer la sesión actual:', error);
+    } catch {
         return null;
     }
 }

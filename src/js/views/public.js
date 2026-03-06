@@ -1,5 +1,22 @@
 import { getData } from '../store.js';
 
+function formatFecha(fechaStr) {
+    if (!fechaStr) return 'Por definir';
+    return new Date(fechaStr + 'T00:00:00').toLocaleDateString('es-CO', {
+        day:   '2-digit',
+        month: 'long',
+        year:  'numeric',
+    });
+}
+function formatFechaCorta(fechaStr) {
+    if (!fechaStr) return null;
+    return new Date(fechaStr + 'T00:00:00').toLocaleDateString('es-CO', {
+        day:   '2-digit',
+        month: 'short',
+        year:  'numeric',
+    });
+}
+
 export function renderPublicView(container) {
     const courses  = getData('lmsCourses').filter(c => c.visibilidad === 'Publico');
     const teachers = getData('lmsTeachers');
@@ -40,8 +57,10 @@ export function renderPublicView(container) {
                 ${courses.length === 0
                     ? '<p class="text-center" style="grid-column: 1 / -1; color: var(--text-muted);">No hay cursos públicos disponibles en este momento.</p>'
                     : courses.map(course => {
-                        const teacher     = teachers.find(t => t.id === course.docenteId);
-                        const teacherFoto = teacher?.foto || `https://picsum.photos/seed/${teacher?.id || 'def'}/200`;
+                        const teacher      = teachers.find(t => t.id === course.docenteId);
+                        const teacherFoto  = teacher?.foto || `https://picsum.photos/seed/${teacher?.id || 'def'}/200`;
+                        const fechaCorta   = formatFechaCorta(course.fecha);
+
                         return `
                             <div class="card public-course-card" role="button" tabindex="0"
                                 data-course-id="${course.id}">
@@ -74,6 +93,22 @@ export function renderPublicView(container) {
                                             ${course.duracion || ''}
                                         </span>
                                     </div>
+                                    ${fechaCorta ? `
+                                    <div style="margin-top:0.6rem;display:flex;align-items:center;gap:0.4rem;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            style="color:var(--primary);flex-shrink:0;">
+                                            <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                                            <line x1="16" x2="16" y1="2" y2="6"/>
+                                            <line x1="8"  x2="8"  y1="2" y2="6"/>
+                                            <line x1="3"  x2="21" y1="10" y2="10"/>
+                                        </svg>
+                                        <span style="font-size:0.8rem;color:var(--text-muted);">
+                                            Inicia: <strong style="color:var(--text-main);">${fechaCorta}</strong>
+                                        </span>
+                                    </div>` : ''}
+
                                     <p style="margin-top: 0.75rem; color: var(--primary); font-size: 0.875rem; font-weight: 600;">
                                         Ver información completa →
                                     </p>
@@ -85,6 +120,7 @@ export function renderPublicView(container) {
             </div>
         </section>
 
+        <!-- Modal detalle curso -->
         <div id="public-course-modal" class="modal-overlay" tabindex="-1">
             <div class="modal-content public-course-modal-content">
                 <div class="modal-header">
@@ -116,7 +152,7 @@ export function renderPublicView(container) {
         modalBody.innerHTML = '';
     };
 
-    const renderModules = (modules) => {
+    const renderModulesHTML = (modules) => {
         if (!modules || modules.length === 0) {
             return '<p style="color: var(--text-muted);">Este curso no tiene módulos publicados aún.</p>';
         }
@@ -164,6 +200,12 @@ export function renderPublicView(container) {
                     <p><strong>Duración:</strong> ${course.duracion || 'N/D'}</p>
                     <p><strong>Estado:</strong> ${course.estado || 'N/D'}</p>
                     <p><strong>Etiquetas:</strong> ${course.etiquetas || 'Sin etiquetas'}</p>
+                    <p style="margin-top:0.5rem;">
+                        <strong>Fecha de inicio:</strong>
+                        <span style="color:var(--primary);font-weight:600;">
+                            ${formatFecha(course.fecha)}
+                        </span>
+                    </p>
                 </div>
                 <div>
                     <p><strong>Docente:</strong> ${teacher ? `${teacher.nombres} ${teacher.apellidos}` : 'Sin asignar'}</p>
@@ -177,7 +219,7 @@ export function renderPublicView(container) {
             </div>
             <div style="margin-top: 1.25rem;">
                 <h3 style="font-size: 1rem; font-weight:600; margin-bottom: 0.75rem;">Módulos y Lecciones</h3>
-                ${renderModules(course.modulos)}
+                ${renderModulesHTML(course.modulos)}
             </div>
         `;
         modal.classList.add('active');
