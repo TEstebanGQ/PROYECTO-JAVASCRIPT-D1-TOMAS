@@ -1,7 +1,6 @@
 
 .btn-hamburger { display:none; }
 
-/* ── MD helpers ≥768px ── */
 @media (min-width:768px) {
   .md\:grid-cols-2 { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .md\:grid-cols-3 { grid-template-columns:repeat(3,minmax(0,1fr)); }
@@ -10,7 +9,6 @@
   .public-course-detail-grid { grid-template-columns:1fr 1fr; }
 }
 
-/* ── Tablet 768–1023px ── */
 @media (min-width:768px) and (max-width:1023px) {
   .page-content  { padding:1.5rem; }
   .page-title    { font-size:1.375rem; }
@@ -19,7 +17,6 @@
   .grid-cols-3   { grid-template-columns:repeat(2,minmax(0,1fr)); }
 }
 
-/* ── Tablet + Móvil ≤1023px ── */
 @media (max-width:1023px) {
   .sidebar       { transform:translateX(calc(-1 * var(--sidebar-width))); box-shadow:none; }
   .sidebar.open  { transform:translateX(0); box-shadow:var(--shadow-lg); }
@@ -37,7 +34,6 @@
   .page-title    { font-size:1.25rem; }
 }
 
-/* ── Móvil ≤767px ── */
 @media (max-width:767px) {
   .grid-cols-2,.grid-cols-3,.grid-cols-4 { grid-template-columns:1fr; }
   .page-header   { flex-direction:column; align-items:flex-start; gap:.75rem; }
@@ -62,7 +58,6 @@
   #modules-panel { margin-top:1rem; }
 }
 
-/* ── Móvil pequeño ≤479px ── */
 @media (max-width:479px) {
   :root { --sidebar-width:220px; }
   .public-hero h1    { font-size:1.5rem; }
@@ -72,7 +67,6 @@
   .page-header .btn  { width:100%; justify-content:center; }
 }
 
-/* ── Wide ≥1280px ── */
 @media (min-width:1280px) {
   .container    { max-width:1320px; }
   .page-content { padding:2.5rem 3rem; }
