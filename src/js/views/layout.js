@@ -1,8 +1,16 @@
 import { logout, getCurrentUser } from '../store.js';
 import { navigateTo } from '../router.js';
 
+/** Detecta si la sesión actual viene de localStorage (recordarme) o sessionStorage */
+function getSessionType() {
+    const key = 'lmsCurrentUser';
+    if (localStorage.getItem(key)) return 'persistent';   // recordarme
+    if (sessionStorage.getItem(key)) return 'temporary';   // solo esta sesión
+    return null;
+}
+
 export function renderLayout(renderContent) {
-    const app = document.getElementById('app');
+    const app  = document.getElementById('app');
     const user = getCurrentUser();
 
     if (!user || typeof user.nombres !== 'string' || user.nombres.trim() === '') {
@@ -14,6 +22,11 @@ export function renderLayout(renderContent) {
     const userName    = user.nombres.trim();
     const userCargo   = typeof user.cargo === 'string' && user.cargo.trim() !== '' ? user.cargo : 'Administrador';
     const userInitial = userName.charAt(0).toUpperCase();
+    const sessionType = getSessionType();
+
+    const sessionBadgeHTML = sessionType === 'persistent'
+        ? `<div class="session-badge"><span class="session-dot"></span>Sesión guardada</div>`
+        : `<div class="session-badge"><span class="session-dot" style="background:#f59e0b;"></span>Sesión temporal</div>`;
 
     const currentHash = window.location.hash;
     const isActive = (route) => currentHash === `#${route}` ? 'active' : '';
@@ -24,7 +37,7 @@ export function renderLayout(renderContent) {
         <div class="app-layout">
             <aside class="sidebar" id="sidebar">
                 <div class="sidebar-header">
-                    <img src="/img/icons/icon1.png" alt="Logo" style="width: 32px; height: 32px;">
+                    <img src="/img/icons/icon1.png" alt="Logo" style="width:32px;height:32px;">
                     <div class="sidebar-title">LMS Admin</div>
                 </div>
 
@@ -47,20 +60,22 @@ export function renderLayout(renderContent) {
                     </a>
                 </nav>
 
-                <!-- Footer: avatar + nombre + logout -->
+                <!-- Footer: avatar + nombre + tipo de sesión + logout -->
                 <div class="sidebar-footer">
-                    <div class="flex items-center gap-2" style="margin-bottom: 0.75rem;">
-                        <div style="width:32px;height:32px;border-radius:50%;background:var(--primary);
-                                    color:white;display:flex;align-items:center;justify-content:center;
-                                    font-weight:bold;flex-shrink:0;">
+                    <div class="flex items-center gap-2" style="margin-bottom:0.75rem;">
+                        <div style="width:36px;height:36px;border-radius:50%;
+                                    background:var(--primary);color:white;
+                                    display:flex;align-items:center;justify-content:center;
+                                    font-weight:bold;flex-shrink:0;font-size:1rem;">
                             ${userInitial}
                         </div>
-                        <div style="min-width:0;">
+                        <div style="min-width:0;flex:1;">
                             <div style="font-size:0.875rem;font-weight:500;color:white;
                                         white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
                                 ${userName}
                             </div>
-                            <div style="font-size:0.75rem;color:var(--sidebar-text);">${userCargo}</div>
+                            <div style="font-size:0.7rem;color:var(--sidebar-text);">${userCargo}</div>
+                            ${sessionBadgeHTML}
                         </div>
                     </div>
 
@@ -120,11 +135,9 @@ export function renderLayout(renderContent) {
 
     btnHamburger.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
     sidebarOverlay.addEventListener('click', closeSidebar);
-
     sidebar.querySelectorAll('.nav-item').forEach(item =>
         item.addEventListener('click', () => { if (sidebarOverlay.classList.contains('active')) closeSidebar(); })
     );
-
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && sidebar.classList.contains('open')) closeSidebar();
     });

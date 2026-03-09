@@ -11,7 +11,7 @@ export function renderAdmins(container) {
             <button id="btn-add-admin" class="btn btn-primary">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                     fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+                    stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px;">
                     <path d="M5 12h14"/><path d="M12 5v14"/>
                 </svg>
                 Nuevo Administrativo
@@ -27,7 +27,7 @@ export function renderAdmins(container) {
                         <th>Correo Electrónico</th>
                         <th class="col-hide-mobile">Teléfono</th>
                         <th>Cargo</th>
-                        <th style="text-align: right;">Acciones</th>
+                        <th style="text-align:right;">Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="admins-table-body"></tbody>
@@ -35,11 +35,13 @@ export function renderAdmins(container) {
         </div>
 
         <!-- Modal Formulario -->
-        <div id="admin-modal" class="modal-overlay">
+        <div id="admin-modal" class="modal-overlay" role="dialog" aria-modal="true"
+             aria-labelledby="modal-title">
             <div class="modal-content">
                 <div class="modal-header">
                     <h2 id="modal-title" class="modal-title">Nuevo Administrativo</h2>
-                    <span class="modal-close" id="close-modal">&times;</span>
+                    <span class="modal-close" id="close-modal" role="button" tabindex="0"
+                          aria-label="Cerrar">&times;</span>
                 </div>
                 <div class="modal-body">
                     <form id="admin-form" novalidate>
@@ -47,51 +49,56 @@ export function renderAdmins(container) {
                         <div class="form-group">
                             <label class="form-label">Identificación *</label>
                             <input type="text" id="admin-identificacion" class="form-control"
-                                required maxlength="20" placeholder="Ej: 1234567890">
+                                required maxlength="20" placeholder="Ej: 1234567890"
+                                autocomplete="off">
                             <span class="form-error hidden" id="err-identificacion"></span>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="form-group">
                                 <label class="form-label">Nombres *</label>
                                 <input type="text" id="admin-nombres" class="form-control"
-                                    required minlength="2" maxlength="80">
+                                    required minlength="2" maxlength="80" autocomplete="off">
                                 <span class="form-error hidden" id="err-nombres"></span>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Apellidos *</label>
                                 <input type="text" id="admin-apellidos" class="form-control"
-                                    required minlength="2" maxlength="80">
+                                    required minlength="2" maxlength="80" autocomplete="off">
                                 <span class="form-error hidden" id="err-apellidos"></span>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="form-group">
                                 <label class="form-label">Correo Electrónico *</label>
-                                <input type="email" id="admin-email" class="form-control" required>
+                                <input type="email" id="admin-email" class="form-control"
+                                    required autocomplete="off">
                                 <span class="form-error hidden" id="err-email"></span>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Teléfono *</label>
                                 <input type="tel" id="admin-telefono" class="form-control"
-                                    required maxlength="15" placeholder="Ej: 3001234567">
+                                    required maxlength="15" placeholder="Ej: 3001234567"
+                                    autocomplete="off">
                                 <span class="form-error hidden" id="err-telefono"></span>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Cargo *</label>
                             <input type="text" id="admin-cargo" class="form-control"
-                                required maxlength="60">
+                                required maxlength="60" autocomplete="off">
                             <span class="form-error hidden" id="err-cargo"></span>
                         </div>
-                        <div class="form-group" style="position: relative;">
+                        <div class="form-group" style="position:relative;">
                             <label class="form-label" id="password-label">
                                 Contraseña (para acceso al sistema) *
                             </label>
                             <input type="password" id="admin-password" class="form-control"
-                                placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+                                placeholder="Mínimo 6 caracteres"
+                                style="padding-right:2.75rem;"
+                                autocomplete="new-password">
                             <button type="button" id="toggle-admin-password"
-                                style="position:absolute;right:0.75rem;top:2rem;background:none;border:none;
-                                       cursor:pointer;color:var(--text-muted);padding:0.25rem;"
+                                style="position:absolute;right:0.75rem;bottom:0.5rem;background:none;
+                                       border:none;cursor:pointer;color:var(--text-muted);padding:0.25rem;"
                                 aria-label="Mostrar contraseña">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -105,11 +112,22 @@ export function renderAdmins(container) {
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button id="btn-cancel" class="btn btn-outline">Cancelar</button>
-                    <button id="btn-save" class="btn btn-primary">Guardar</button>
+                    <button id="btn-cancel" class="btn btn-outline modal-cancel">Cancelar</button>
+                    <button id="btn-save" class="btn btn-primary">
+                        <span id="btn-save-text">Guardar</span>
+                        <svg id="btn-save-spinner" class="hidden" xmlns="http://www.w3.org/2000/svg"
+                            width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round"
+                            style="animation:spin 0.7s linear infinite;margin-left:6px;">
+                            <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
+
+        <style>@keyframes spin { to { transform:rotate(360deg); } }</style>
     `;
 
     if (container) {
@@ -123,25 +141,53 @@ export function renderAdmins(container) {
         if (admins.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="6" class="text-center" style="color: var(--text-muted); padding: 2rem;">
-                        No hay administrativos registrados.
+                    <td colspan="6" class="text-center" style="color:var(--text-muted);padding:2.5rem;">
+                        <div style="display:flex;flex-direction:column;align-items:center;gap:0.75rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                style="opacity:0.3;">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                            <span>No hay administrativos registrados.</span>
+                            <button id="btn-empty-add" class="btn btn-primary btn-sm">
+                                + Agregar primero
+                            </button>
+                        </div>
                     </td>
                 </tr>`;
+            document.getElementById('btn-empty-add')?.addEventListener('click', () => openAdminModal());
             return;
         }
 
         tbody.innerHTML = admins.map(admin => `
             <tr>
                 <td>
-                    <div style="font-weight: 500;">${admin.nombres} ${admin.apellidos}</div>
+                    <div style="display:flex;align-items:center;gap:0.625rem;">
+                        <div style="width:32px;height:32px;border-radius:50%;
+                                    background:var(--primary-light);color:var(--primary);
+                                    display:flex;align-items:center;justify-content:center;
+                                    font-weight:700;font-size:0.875rem;flex-shrink:0;">
+                            ${admin.nombres.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                            <div style="font-weight:500;">${admin.nombres} ${admin.apellidos}</div>
+                            ${admin.id === 'admin-1'
+                                ? '<div style="font-size:0.7rem;color:var(--primary);font-weight:600;">Principal</div>'
+                                : ''}
+                        </div>
+                    </div>
                 </td>
                 <td class="col-hide-mobile">${admin.identificacion}</td>
                 <td>${admin.email}</td>
                 <td class="col-hide-mobile">${admin.telefono}</td>
                 <td><span class="badge badge-info">${admin.cargo}</span></td>
-                <td style="text-align: right; white-space: nowrap;">
+                <td style="text-align:right;white-space:nowrap;">
                     <button class="btn btn-outline btn-sm btn-edit"
-                        data-id="${admin.id}" style="margin-right: 0.5rem;">Editar</button>
+                        data-id="${admin.id}" style="margin-right:0.5rem;">Editar</button>
                     <button class="btn btn-danger btn-sm btn-delete"
                         data-id="${admin.id}"
                         ${admin.id === 'admin-1' ? 'disabled title="No se puede eliminar el admin principal"' : ''}>
@@ -152,7 +198,7 @@ export function renderAdmins(container) {
         `).join('');
 
         document.querySelectorAll('.btn-edit').forEach(btn =>
-            btn.addEventListener('click', (e) => openModal(e.currentTarget.dataset.id))
+            btn.addEventListener('click', (e) => openAdminModal(e.currentTarget.dataset.id))
         );
         document.querySelectorAll('.btn-delete').forEach(btn =>
             btn.addEventListener('click', (e) => handleDelete(e.currentTarget.dataset.id))
@@ -160,12 +206,21 @@ export function renderAdmins(container) {
     }
 
     function setupEvents() {
-        document.getElementById('btn-add-admin').addEventListener('click', () => openModal());
-        document.getElementById('close-modal').addEventListener('click', closeModal);
-        document.getElementById('btn-cancel').addEventListener('click', closeModal);
+        document.getElementById('btn-add-admin').addEventListener('click', () => openAdminModal());
+        document.getElementById('close-modal').addEventListener('click', closeAdminModal);
+        document.getElementById('btn-cancel').addEventListener('click', closeAdminModal);
 
         document.getElementById('admin-modal').addEventListener('click', (e) => {
-            if (e.target === e.currentTarget) closeModal();
+            if (e.target === e.currentTarget) closeAdminModal();
+        });
+
+        // Enter en modal → guardar
+        document.getElementById('admin-modal').addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') { closeAdminModal(); return; }
+            if (e.key === 'Enter' && e.target.tagName !== 'BUTTON' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                document.getElementById('btn-save').click();
+            }
         });
 
         document.getElementById('btn-save').addEventListener('click', handleSave);
@@ -174,9 +229,17 @@ export function renderAdmins(container) {
             const input = document.getElementById('admin-password');
             input.type = input.type === 'text' ? 'password' : 'text';
         });
+
+        // Limpiar errores al escribir
+        document.getElementById('admin-form').addEventListener('input', (e) => {
+            const field = e.target.id.replace('admin-', '');
+            const errEl = document.getElementById(`err-${field}`);
+            if (errEl) { errEl.textContent = ''; errEl.classList.add('hidden'); }
+            e.target.classList.remove('is-invalid');
+        });
     }
 
-    function openModal(id = null) {
+    function openAdminModal(id = null) {
         const modal = document.getElementById('admin-modal');
         clearErrors();
         document.getElementById('admin-form').reset();
@@ -204,9 +267,12 @@ export function renderAdmins(container) {
         }
 
         modal.classList.add('active');
+        requestAnimationFrame(() => {
+            document.getElementById('admin-identificacion')?.focus();
+        });
     }
 
-    function closeModal() {
+    function closeAdminModal() {
         document.getElementById('admin-modal').classList.remove('active');
         clearErrors();
     }
@@ -233,6 +299,15 @@ export function renderAdmins(container) {
         );
     }
 
+    function setSaveLoading(loading) {
+        const btn     = document.getElementById('btn-save');
+        const text    = document.getElementById('btn-save-text');
+        const spinner = document.getElementById('btn-save-spinner');
+        btn.disabled  = loading;
+        text.textContent = loading ? 'Guardando...' : 'Guardar';
+        spinner.classList.toggle('hidden', !loading);
+    }
+
     function handleSave() {
         clearErrors();
 
@@ -252,15 +327,12 @@ export function renderAdmins(container) {
         } else if (!isUniqueField('identificacion', identificacion, id || null)) {
             showError('identificacion', 'Esa identificación ya está registrada.'); hasError = true;
         }
-
         if (!nombres || nombres.length < 2) {
             showError('nombres', 'Los nombres son obligatorios (mínimo 2 caracteres).'); hasError = true;
         }
-
         if (!apellidos || apellidos.length < 2) {
             showError('apellidos', 'Los apellidos son obligatorios (mínimo 2 caracteres).'); hasError = true;
         }
-
         if (!email) {
             showError('email', 'El correo electrónico es obligatorio.'); hasError = true;
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -268,11 +340,9 @@ export function renderAdmins(container) {
         } else if (!isUniqueField('email', email, id || null)) {
             showError('email', 'Ese correo ya está en uso por otro administrativo.'); hasError = true;
         }
-
         if (!telefono || telefono.length < 7) {
-            showError('telefono', 'El teléfono es obligatorio (mínimo 7 caracteres).'); hasError = true;
+            showError('telefono', 'El teléfono es obligatorio (mínimo 7 dígitos).'); hasError = true;
         }
-
         if (!cargo) {
             showError('cargo', 'El cargo es obligatorio.'); hasError = true;
         }
@@ -282,25 +352,31 @@ export function renderAdmins(container) {
             showError('password', 'La contraseña debe tener al menos 6 caracteres.'); hasError = true;
         }
 
-        if (hasError) return;
+        if (hasError) {
+            // Scroll al primer error
+            document.querySelector('.is-invalid')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+
+        setSaveLoading(true);
 
         const adminData = { identificacion, nombres, apellidos, email, telefono, cargo };
+        if (passwordInput) adminData.password = hashPassword(passwordInput);
 
-        if (passwordInput) {
-            adminData.password = hashPassword(passwordInput);
-        }
+        setTimeout(() => {
+            if (id) {
+                updateItem('lmsAdmins', id, adminData);
+                showToast('Administrativo actualizado correctamente');
+            } else {
+                createItem('lmsAdmins', adminData);
+                showToast('Administrativo creado correctamente');
+            }
 
-        if (id) {
-            updateItem('lmsAdmins', id, adminData);
-            showToast('Administrativo actualizado correctamente');
-        } else {
-            createItem('lmsAdmins', adminData);
-            showToast('Administrativo creado correctamente');
-        }
-
-        admins = getData('lmsAdmins');
-        renderTable();
-        closeModal();
+            admins = getData('lmsAdmins');
+            renderTable();
+            closeAdminModal();
+            setSaveLoading(false);
+        }, 300);
     }
 
     function handleDelete(id) {

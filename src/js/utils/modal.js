@@ -1,16 +1,23 @@
-// utils/modal.js
-// Funciones reutilizables para abrir/cerrar modales
-
 /**
- * Abre un modal por su ID
+ * Abre un modal por su ID y hace foco en el primer campo interactivo.
  * @param {string} modalId
  */
 export function openModal(modalId) {
-    document.getElementById(modalId)?.classList.add('active');
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+    modal.classList.add('active');
+
+    // Foco automático en el primer input/select/textarea visible
+    requestAnimationFrame(() => {
+        const first = modal.querySelector(
+            'input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled])'
+        );
+        first?.focus();
+    });
 }
 
 /**
- * Cierra un modal por su ID
+ * Cierra un modal por su ID.
  * @param {string} modalId
  */
 export function closeModal(modalId) {
@@ -23,9 +30,11 @@ export function closeModal(modalId) {
  * - Botón Cancelar (.modal-cancel)
  * - Click en el overlay
  * - Tecla Escape
+ * - Enter en inputs dispara el botón de guardado (si no es textarea)
  * @param {string} modalId
+ * @param {string} [saveButtonId] — ID del botón de guardado (para Enter)
  */
-export function setupModalClose(modalId) {
+export function setupModalClose(modalId, saveButtonId) {
     const modal = document.getElementById(modalId);
     if (!modal) return;
 
@@ -42,7 +51,24 @@ export function setupModalClose(modalId) {
     });
 
     // Escape
-    document.addEventListener('keydown', e => {
+    const escHandler = (e) => {
         if (e.key === 'Escape' && modal.classList.contains('active')) close();
-    });
+    };
+    document.addEventListener('keydown', escHandler);
+
+    // Enter en inputs dispara guardado (excepto en textarea)
+    if (saveButtonId) {
+        modal.addEventListener('keydown', e => {
+            if (
+                e.key === 'Enter'
+                && !e.shiftKey
+                && e.target.tagName !== 'TEXTAREA'
+                && e.target.tagName !== 'BUTTON'
+                && modal.classList.contains('active')
+            ) {
+                e.preventDefault();
+                document.getElementById(saveButtonId)?.click();
+            }
+        });
+    }
 }

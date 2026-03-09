@@ -81,6 +81,7 @@ function generateId() {
     }
     return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
+
 export function getData(key) {
     const raw = localStorage.getItem(key);
     if (!raw) return [];
@@ -103,8 +104,8 @@ export function setData(key, data) {
         }
     }
 }
-export function initStore() {
 
+export function initStore() {
     if (getData(storageKeys.admins).length === 0) {
         setData(storageKeys.admins, [defaultAdmin]);
     }
@@ -122,7 +123,7 @@ export function initStore() {
     }
 }
 
-// CRUD genérico
+// ── CRUD genérico ──────────────────────────────────────────────────────────
 export function getById(key, id) {
     return getData(key).find(item => item.id === id) || null;
 }
@@ -150,28 +151,45 @@ export function deleteItem(key, id) {
     const filtered = getData(key).filter(item => item.id !== id);
     setData(key, filtered);
 }
-export function login(email, password) {
-    const admins       = getData(storageKeys.admins);
+
+// ── Autenticación ──────────────────────────────────────────────────────────
+
+/**
+ * Inicia sesión. Si rememberMe=true guarda en localStorage (persiste entre
+ * sesiones); si no, usa sessionStorage (se borra al cerrar la pestaña).
+ */
+export function login(email, password, rememberMe = false) {
+    const admins          = getData(storageKeys.admins);
     const normalizedEmail = email.trim().toLowerCase();
-    const hashedInput  = hashPassword(password);
+    const hashedInput     = hashPassword(password);
 
     const admin = admins.find(
         a => a.email.toLowerCase() === normalizedEmail && a.password === hashedInput
     );
 
     if (admin) {
-        localStorage.setItem(storageKeys.currentUser, JSON.stringify(admin));
+        const payload = JSON.stringify(admin);
+        if (rememberMe) {
+            localStorage.setItem(storageKeys.currentUser, payload);
+            sessionStorage.removeItem(storageKeys.currentUser);
+        } else {
+            sessionStorage.setItem(storageKeys.currentUser, payload);
+            localStorage.removeItem(storageKeys.currentUser);
+        }
         return true;
     }
     return false;
 }
 
 export function logout() {
+    sessionStorage.removeItem(storageKeys.currentUser);
     localStorage.removeItem(storageKeys.currentUser);
 }
 
 export function getCurrentUser() {
-    const raw = localStorage.getItem(storageKeys.currentUser);
+    // Prioridad: sessionStorage (sesión activa) → localStorage (recordarme)
+    const raw = sessionStorage.getItem(storageKeys.currentUser)
+             || localStorage.getItem(storageKeys.currentUser);
     if (!raw) return null;
     try {
         const parsed = JSON.parse(raw);
