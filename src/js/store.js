@@ -5,6 +5,7 @@ const storageKeys = {
     teachers:    'lmsTeachers',
     courses:     'lmsCourses',
     currentUser: 'lmsCurrentUser',
+    student:     'lmsStudent',
 };
 
 const defaultAdmin = {
@@ -75,6 +76,22 @@ const initialCourses = [
     },
 ];
 
+const initialStudents = [
+    {
+        id:             's-1',
+        codigo:         'ST-001',
+        identificacion: '12345678',
+        nombres:        'Martin',
+        apellidos:      'Gonzalez',
+        email:          'cmendoza@abc.edu',
+        genero:         'Masculino',
+        fecha:          new Date(),
+        telefono:       '3001234567',
+        direccion:      'Mnazana D casa 04',
+    },
+];
+
+
 function generateId() {
     if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
         return crypto.randomUUID();
@@ -114,6 +131,9 @@ export function initStore() {
     }
     if (getData(storageKeys.courses).length === 0) {
         setData(storageKeys.courses, initialCourses);
+    }
+    if (getData(storageKeys.student).length === 0) {
+        setData(storageKeys.student, initialStudents)
     }
 
     // Garantizar que el admin principal siempre exista

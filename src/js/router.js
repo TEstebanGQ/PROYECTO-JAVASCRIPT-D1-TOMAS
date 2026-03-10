@@ -6,6 +6,8 @@ import { renderDashboard } from './views/dashboard.js';
 import { renderCourses } from './views/courses/index.js';
 import { renderTeachers } from './views/teachers.js';
 import { renderAdmins } from './views/admins.js';
+import { renderStudents } from './views/student.js';
+
 
 const routes = {
     '/': renderPublicView,
@@ -14,6 +16,7 @@ const routes = {
     '/courses': () => renderLayout(renderCourses),
     '/teachers': () => renderLayout(renderTeachers),
     '/admins': () => renderLayout(renderAdmins),
+    '/students': () => renderLayout(renderStudents),
 };
 
 export function initRouter() {
@@ -46,7 +49,7 @@ function getPath() {
 
 function router() {
     const path = getPath();
-    const protectedRoutes = ['/dashboard', '/courses', '/teachers', '/admins'];
+    const protectedRoutes = ['/dashboard', '/courses', '/teachers', '/admins', '/students'];
 
     if (protectedRoutes.includes(path) && !isAuthenticated()) {
         navigateTo('/login');
