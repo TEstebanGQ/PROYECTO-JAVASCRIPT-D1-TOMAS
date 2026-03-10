@@ -58,6 +58,20 @@ export function renderLayout(renderContent) {
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
                         Administrativos
                     </a>
+
+                    <!-- Separador -->
+                    <div style="margin:0.5rem 1.5rem;border-top:1px solid rgba(255,255,255,0.08);"></div>
+
+                    <a href="/report" class="nav-item ${isActive('/report')}" data-link>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <polyline points="10 9 9 9 8 9"/>
+                        </svg>
+                        Reporte de Cursos
+                    </a>
                 </nav>
 
                 <!-- Footer: avatar + nombre + tipo de sesión + logout -->
