@@ -78,19 +78,17 @@ const initialCourses = [
 
 const initialStudents = [
     {
-        id:             's-1',
-        codigo:         'ST-001',
-        identificacion: '12345678',
-        nombres:        'Martin',
-        apellidos:      'Gonzalez',
-        email:          'cmendoza@abc.edu',
-        genero:         'Masculino',
-        fecha:          new Date(),
-        telefono:       '3001234567',
-        direccion:      'Mnazana D casa 04',
+        id:              's-1',
+        identificacion:  '12345678',
+        nombres:         'Martin',
+        apellidos:       'Gonzalez',
+        genero:          'Masculino',
+        fechaNacimiento: '2000-05-15',
+        telefono:        '3001234567',
+        direccion:       'Manzana D casa 04',
+        cursos:          ['c-1'],
     },
 ];
-
 
 function generateId() {
     if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
