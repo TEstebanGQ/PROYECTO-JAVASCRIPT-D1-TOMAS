@@ -45,8 +45,7 @@ Abrí el archivo `index.html` directamente en tu navegador.
 
 ## Estructura del proyecto
 
-[![descripcion](https://ibb.co/LhnVY9yb)](https://ibb.co/LhnVY9yb)
-
+[![ser1](https://i.ibb.co/xShSrbHm/ser1.jpg)](https://ibb.co/pv2vkTyW)
 ```
 index.html
 src/
