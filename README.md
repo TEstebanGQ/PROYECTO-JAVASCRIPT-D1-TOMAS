@@ -39,13 +39,10 @@ Abrí el archivo `index.html` directamente en tu navegador.
 | Email    | `admin@abc.edu`   |
 | Contraseña | `admin`         |
 
-> Si modificás las credenciales desde el módulo de Administrativos, debés iniciar sesión con los nuevos datos.
-
 ---
 
 ## Estructura del proyecto
 
-[![ser1](https://i.ibb.co/xShSrbHm/ser1.jpg)](https://ibb.co/pv2vkTyW)
 ```
 index.html
 src/
