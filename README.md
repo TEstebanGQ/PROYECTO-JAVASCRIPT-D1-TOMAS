@@ -154,6 +154,17 @@ Al ser un MVP de frontend puro:
 
 ---
 
+## 👨‍💻 Autor
+
+**Tomas Esteban Gonzalez Quintero** — *Desarrollador Full Stack*
+
+- 🌐 [Portafolio Web](https://portafolio-tegq.netlify.app/)
+- 🐙 [GitHub: @TEstebanGQ](https://github.com/TEstebanGQ)
+- 💼 [LinkedIn](https://www.linkedin.com/in/tomas-esteban-gonzalez-quintero/)
+- 📧 [Email](mailto:tomasestebangonzalezquintero@gmail.com)
+
+---
+
 <div align="center">
   <br/>
   <a href="https://github.com/TEstebanGQ">
