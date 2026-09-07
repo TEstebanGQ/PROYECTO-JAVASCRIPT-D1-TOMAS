@@ -151,3 +151,12 @@ Al ser un MVP de frontend puro:
 - Para un entorno real se recomienda implementar autenticación con JWT, HTTPS y una base de datos.
 
 ---
+
+---
+
+<div align="center">
+  <br/>
+  <img src="https://raw.githubusercontent.com/TEstebanGQ/TEstebanGQ/main/assets/logo-tegq.jpg" width="80" alt="TEGQ Brand Logo" />
+  <br/>
+  <sub><b>© Tomas Esteban González Quintero — TEGQ</b></sub>
+</div>
